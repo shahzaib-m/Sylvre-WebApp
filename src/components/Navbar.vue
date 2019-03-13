@@ -25,7 +25,7 @@
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
-        <div v-if="isLoggingIn">
+        <div v-if="isAttemptingRefreshLogin">
            <b-spinner type="grow" variant="success" />
         </div>
         <div v-else-if="isLoggedIn" class="not-logged-in animated infinite fadeIn">
@@ -62,7 +62,7 @@
 export default {
   name: 'Navbar',
   props: {
-    isLoggingIn: Boolean,
+    isAttemptingRefreshLogin: Boolean,
     isLoggedIn: Boolean,
     username: String
   },
