@@ -25,7 +25,7 @@
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
-        <div v-if="isAttemptingRefreshLogin">
+        <div v-if="isLoadingUser">
            <b-spinner type="grow" variant="success" />
         </div>
         <div v-else-if="isLoggedIn" class="not-logged-in animated infinite fadeIn">
@@ -64,6 +64,7 @@ export default {
   props: {
     isAttemptingRefreshLogin: Boolean,
     isLoggedIn: Boolean,
+    isGettingUserDetails: Boolean,
     username: String
   },
   data() {
@@ -72,6 +73,11 @@ export default {
       mainProjectGithubUrl: process.env.VUE_APP_SYLVRE_MAIN_PROJECT_GITHUB,
       webAppProjectGithubUrl: process.env.VUE_APP_SYLVRE_WEBAPP_PROJECT_GITHUB,
       authorGithubUrl: process.env.VUE_APP_AUTHOR_GITHUB_URL
+    }
+  },
+  computed: {
+    isLoadingUser: function() {
+      return this.isAttemptingRefreshLogin || this.isGettingUserDetails;
     }
   }
 }

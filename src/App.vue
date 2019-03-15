@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Navbar v-bind:isAttemptingRefreshLogin="isAttemptingRefreshLogin" v-bind:isLoggedIn="isLoggedIn"
-            v-bind:username="currentUser.username"
+            v-bind:username="currentUser.username" v-bind:isGettingUserDetails="isGettingUserDetails"
             v-on:login-click="openLoginModal" v-on:register-click="openRegister"
             v-on:settings-click="openSettings" v-on:logout-click="openLogout" />
 
@@ -17,6 +17,7 @@ import Navbar from './components/Navbar.vue';
 import LoginModal from './components/LoginModal.vue';
 
 import AuthApi from './services/api/Auth.js';
+import UsersApi from './services/api/Users.js';
 
 export default {
   name: 'app',
@@ -29,7 +30,7 @@ export default {
       isAttemptingRefreshLogin: true,
       isLoggedIn: false,
       
-      isGettingUserDetails: true,
+      isGettingUserDetails: false,
       currentUser: {
         username: '',
         email: '',
@@ -72,6 +73,15 @@ export default {
         this.isLoggingIn = false;
 
         this.closeLoginModal();
+
+        this.isGettingUserDetails = true;
+
+        var user = await UsersApi.getUser(this.userId);
+        this.currentUser.username = user.username;
+        this.currentUser.email = user.email;
+        this.currentUser.fullName = user.fullName;
+
+        this.isGettingUserDetails = false;
       }
       catch(error) {
         if (error.response) {
@@ -88,16 +98,27 @@ export default {
   },
   created: async function() { // try to get a new access token and refresh using the current refresh token, if available
     try {
-      const userId = await AuthApi.refresh();
+      const data = await AuthApi.refresh();
 
-      this.userId = userId;
+      this.userId = data.userId;
       this.isLoggedIn = true;
+
+      this.isAttemptingRefreshLogin = false;
+
+      this.isGettingUserDetails = true;
+      
+      var user = await UsersApi.getUser(this.userId);
+      this.currentUser.username = user.username;
+      this.currentUser.email = user.email;
+      this.currentUser.fullName = user.fullName;
+
+      this.isGettingUserDetails = false;
     }
     catch(error) {
       this.isLoggedIn = false;
+      this.isAttemptingRefreshLogin = false;
+      this.isGettingUserDetails = false;
     }
-
-    this.isAttemptingRefreshLogin = false;
   }
 }
 </script>
