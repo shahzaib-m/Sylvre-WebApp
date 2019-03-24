@@ -3,7 +3,7 @@
     <Navbar v-bind:isAttemptingRefreshLogin="isAttemptingRefreshLogin" v-bind:isLoggedIn="isLoggedIn"
             v-bind:username="currentUser.username" v-bind:isGettingUserDetails="isGettingUserDetails"
             v-on:login-click="openLoginModal" v-on:register-click="openRegister"
-            v-on:settings-click="openSettings" v-on:logout-click="logout"
+            v-on:settings-click="openSettings" v-on:logout-click="logout" v-bind:isLoggingOut="isLoggingOut"
             v-bind:isServerDown="isServerDown" />
 
     <LoginModal ref="loginModalRef" v-bind:errorMessage="loginModalErrorMessage"
@@ -50,7 +50,8 @@ export default {
       userId: null,
 
       loginModalErrorMessage: '',
-      isLoggingIn: false
+      isLoggingIn: false,
+      isLoggingOut: false
     }
   },
   methods: {
@@ -69,8 +70,22 @@ export default {
     openSettings() {
       console.log('settings clicked')
     },
-    logout() {
-      console.log('logout clicked');
+    async logout() {
+      this.isLoggingOut = true;
+
+      try {
+        await AuthApi.logout();
+
+        this.isLoggedIn = false;
+      }
+      catch (error){
+        if (!error.response) {
+          this.isServerDown = true;
+        }
+      }
+      finally {
+        this.isLoggingOut = false;
+      }
     },
     async attemptLogin(credentials) {
       this.loginModalErrorMessage = '';

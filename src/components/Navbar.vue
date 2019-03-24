@@ -66,6 +66,7 @@ export default {
     isAttemptingRefreshLogin: Boolean,
     isLoggedIn: Boolean,
     isGettingUserDetails: Boolean,
+    isLoggingOut: Boolean,
     username: String
   },
   data() {
@@ -78,7 +79,7 @@ export default {
   },
   computed: {
     isLoadingUser: function() {
-      return this.isAttemptingRefreshLogin || this.isGettingUserDetails;
+      return this.isAttemptingRefreshLogin || this.isGettingUserDetails || this.isLoggingOut;
     }
   }
 }
