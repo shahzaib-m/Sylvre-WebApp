@@ -31,24 +31,24 @@
         <div v-else-if="isLoggedIn" class="not-logged-in animated infinite fadeIn">
           <span id="username">{{username}}</span>
           <b-button variant="outline-info" class="settings-button" type="button" 
-                    @click="$emit('settings-click')">
+                    @click="$emit('settings-click')" v-bind:disabled="isServerDown">
             <i class="fas fa-cog"></i>
             Settings
           </b-button>
           <b-button variant="outline-warning" type="button"
-                    @click="$emit('logout-click')">
+                    @click="$emit('logout-click')" v-bind:disabled="isServerDown">
             <i class="fas fa-sign-out-alt"></i>
             Logout
           </b-button>
         </div>
         <div v-else class="not-logged-in animated infinite fadeIn">
           <b-button variant="outline-success" class="sign-in-button" type="button"
-                    @click="$emit('login-click')">
+                    @click="$emit('login-click')" v-bind:disabled="isServerDown">
             <i class="fas fa-sign-in-alt"></i>
             Login
           </b-button>
           <b-button variant="outline-info" type="button"
-                    @click="$emit('register-click')">
+                    @click="$emit('register-click')" v-bind:disabled="isServerDown">
             <i class="fas fa-user-plus"></i>
             Register
           </b-button>
@@ -62,6 +62,7 @@
 export default {
   name: 'Navbar',
   props: {
+    isServerDown: Boolean,
     isAttemptingRefreshLogin: Boolean,
     isLoggedIn: Boolean,
     isGettingUserDetails: Boolean,

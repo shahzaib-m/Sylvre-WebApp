@@ -3,11 +3,20 @@
     <Navbar v-bind:isAttemptingRefreshLogin="isAttemptingRefreshLogin" v-bind:isLoggedIn="isLoggedIn"
             v-bind:username="currentUser.username" v-bind:isGettingUserDetails="isGettingUserDetails"
             v-on:login-click="openLoginModal" v-on:register-click="openRegister"
-            v-on:settings-click="openSettings" v-on:logout-click="openLogout" />
+            v-on:settings-click="openSettings" v-on:logout-click="logout"
+            v-bind:isServerDown="isServerDown" />
 
     <LoginModal ref="loginModalRef" v-bind:errorMessage="loginModalErrorMessage"
                 v-on:login-performed="attemptLogin" v-bind:isLoggingIn="isLoggingIn"
                 v-on:modal-closed="loginModalClosed" />
+
+    <div v-if="isServerDown" id="server-down-container" align="center">
+      <i class="far fa-spin fa-frown-open fa-10x" />
+      <h1 id="server-down-message">Sorry, the server seems to be down.</h1>
+    </div>
+    <div v-else id="body-container">
+
+    </div>
   </div>
 </template>
 
@@ -27,6 +36,8 @@ export default {
   },
   data() {
     return {
+      isServerDown: false,
+
       isAttemptingRefreshLogin: true,
       isLoggedIn: false,
       
@@ -58,7 +69,7 @@ export default {
     openSettings() {
       console.log('settings clicked')
     },
-    openLogout() {
+    logout() {
       console.log('logout clicked');
     },
     async attemptLogin(credentials) {
@@ -88,11 +99,14 @@ export default {
           this.loginModalErrorMessage = error.response.status === 401 ? 
             'Username or password is incorrect.' : 'Unknown error encountered with login.'
         }
-        else {
-          this.loginModalErrorMessage = 'Server is down. Please try again later.'
+        else {  // server down
+          this.closeLoginModal();
+
+          this.isServerDown = true;
         }
 
         this.isLoggingIn = false;
+        this.isGettingUserDetails = false;
       }
     }
   },
@@ -115,6 +129,10 @@ export default {
       this.isGettingUserDetails = false;
     }
     catch(error) {
+      if (!error.response) {
+        this.isServerDown = true;
+      }
+      
       this.isLoggedIn = false;
       this.isAttemptingRefreshLogin = false;
       this.isGettingUserDetails = false;
@@ -126,5 +144,19 @@ export default {
 <style>
 #app {
   font-family: 'Roboto', 'Avenir', Helvetica, Arial, sans-serif;
+}
+
+#server-down-container {
+  margin: 200px 0px 0px 0px;
+}
+
+@media only screen and (max-width: 768px){
+  #server-down-container {
+    margin: 30px 0px 0px 0px;
+  }
+}
+
+#server-down-message {
+  margin: 20px 0px 0px 0px;
 }
 </style>
