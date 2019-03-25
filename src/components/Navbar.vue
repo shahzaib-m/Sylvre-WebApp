@@ -13,11 +13,11 @@
           <i class="fas fa-book nav-item-icon"></i>
         </b-nav-item>
         <b-nav-item class="nav-item" v-bind:href="mainProjectGithubUrl" target="_blank">
-          Sylvre and WebAPI
+          Core/WebAPI
           <i class="fab fa-github nav-item-icon"></i>
         </b-nav-item>
         <b-nav-item class="nav-item" v-bind:href="webAppProjectGithubUrl" target="_blank">
-          Web Application
+          Web App
           <i class="fab fa-github nav-item-icon"></i>
         </b-nav-item>
         <b-nav-item class="nav-item" v-bind:href="authorGithubUrl" target="_blank">
@@ -29,12 +29,18 @@
            <b-spinner type="grow" variant="success" />
         </div>
         <div v-else-if="isLoggedIn" class="not-logged-in animated infinite fadeIn">
-          <span id="username">{{username}}</span>
-          <b-button variant="outline-info" class="settings-button" type="button" 
-                    @click="$emit('settings-click')" v-bind:disabled="isServerDown">
-            <i class="fas fa-cog"></i>
-            Settings
-          </b-button>
+          <b-dropdown v-bind:text="username" variant="outline-success" class="settings-button"
+                      v-bind:disabled="isServerDown">
+            <b-dropdown-item href="#">
+              <i class="fas fa-user"></i>
+              View profile
+            </b-dropdown-item>
+            <b-dropdown-divider />
+            <b-dropdown-item href="#">
+              <i class="fas fa-trash-alt"></i>
+              Delete account
+            </b-dropdown-item>
+          </b-dropdown>
           <b-button variant="outline-warning" type="button"
                     @click="$emit('logout-click')" v-bind:disabled="isServerDown">
             <i class="fas fa-sign-out-alt"></i>
