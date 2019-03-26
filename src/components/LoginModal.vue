@@ -5,12 +5,12 @@
          hide-header-close v-on:hide="modalHiding">
   <b-form @submit="onSubmit" v-bind:class="{ 'lower-opacity': isLoggingIn }">
       <b-form-input
-        class="username-input"
-        ref="usernameBox"
+        class="usernameOrEmail-input"
+        ref="usernameOrEmailBox"
         type="text"
-        v-model="username"
+        v-model="usernameOrEmail"
         required
-        placeholder="Username"
+        placeholder="Username/email"
         v-bind:disabled="isLoggingIn" />
 
       <b-form-input
@@ -42,7 +42,7 @@ export default {
   },
   data() {
     return {
-      username: '',
+      usernameOrEmail: '',
       password: '',
       showLoginModal: false
     }
@@ -55,10 +55,10 @@ export default {
       this.showLoginModal = false;
     },
     modalShown() {
-      this.$refs.usernameBox.focus();
+      this.$refs.usernameOrEmailBox.focus();
     },
     modalHidden() {
-      this.username = '';
+      this.usernameOrEmail = '';
       this.password = '';
       
       this.$emit('modal-closed');
@@ -72,7 +72,7 @@ export default {
       evt.preventDefault();
 
       this.$emit('login-performed', {
-        username: this.username,
+        usernameOrEmail: this.usernameOrEmail,
         password: this.password
       });
     },

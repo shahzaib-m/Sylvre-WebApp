@@ -92,7 +92,7 @@ export default {
       this.isLoggingIn = true;
 
       try {
-        const data = await AuthApi.login(credentials.username, credentials.password);
+        const data = await AuthApi.login(credentials.usernameOrEmail, credentials.password);
         this.userId = data.userId;
 
         this.isLoggedIn = true;

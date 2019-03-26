@@ -1,8 +1,8 @@
 import api from './api';
 
-const login = async function(username, password) {
+const login = async function(usernameOrEmail, password) {
     const response = await api.post('/auth/login', {
-        username: username,
+        usernameOrEmail: usernameOrEmail,
         password: password
     }, {
         params: { strategy: 'cookie' }
