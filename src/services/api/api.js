@@ -1,7 +1,36 @@
 import axios from 'axios';
 
-export default axios.create({
+const axiosOptions = {
     baseURL: process.env.VUE_APP_SYLVRE_API_URL,
     withCredentials: true,
     timeout: 2500
-});
+};
+
+const guestInstance = axios.create(axiosOptions);
+const authInstance = axios.create(axiosOptions);
+
+authInstance.interceptors.response.use(
+    response => response,
+    async error => {
+        var responseCode = error.response.status;
+        if (responseCode !== 401) {
+            return Promise.reject(error);
+        }
+
+        try {
+            await guestInstance.post('/auth/refresh', {}, {
+                params: { strategy: 'cookie' }
+            });
+        }
+        catch {
+            return Promise.reject(error);
+        }
+
+        return authInstance(error.response.config);
+    }
+);
+
+export default {
+    guest: guestInstance,
+    auth: authInstance
+};
