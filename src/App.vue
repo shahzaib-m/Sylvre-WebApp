@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <Navbar v-bind:isAttemptingRefreshLogin="isAttemptingRefreshLogin" v-bind:isLoggedIn="isLoggedIn"
-            v-bind:username="currentUser.username" v-bind:isGettingUserDetails="isGettingUserDetails"
+    <Navbar v-bind:isGettingUserDetails="isGettingUserDetails" v-bind:isLoggedIn="isLoggedIn"
+            v-bind:username="currentUser.username" 
             v-on:login-click="openLoginModal" v-on:register-click="openRegister"
-            v-on:settings-click="openSettings" v-on:logout-click="logout" v-bind:isLoggingOut="isLoggingOut"
+            v-on:logout-click="logout" v-bind:isLoggingOut="isLoggingOut"
             v-bind:isServerDown="isServerDown" />
 
     <LoginModal ref="loginModalRef" v-bind:errorMessage="loginModalErrorMessage"
@@ -37,17 +37,15 @@ export default {
   data() {
     return {
       isServerDown: false,
-
-      isAttemptingRefreshLogin: true,
       isLoggedIn: false,
       
       isGettingUserDetails: false,
       currentUser: {
+        userId: null,
         username: '',
         email: '',
         fullName: ''
       },
-      userId: null,
 
       loginModalErrorMessage: '',
       isLoggingIn: false,
@@ -93,7 +91,6 @@ export default {
 
       try {
         const data = await AuthApi.login(credentials.usernameOrEmail, credentials.password);
-        this.userId = data.userId;
 
         this.isLoggedIn = true;
         this.isLoggingIn = false;
@@ -102,7 +99,8 @@ export default {
 
         this.isGettingUserDetails = true;
 
-        var user = await UsersApi.getUser(this.userId);
+        var user = await UsersApi.getUserByIdentity();
+        this.currentUser.userId = user.userId;
         this.currentUser.username = user.username;
         this.currentUser.email = user.email;
         this.currentUser.fullName = user.fullName;
@@ -127,21 +125,15 @@ export default {
   },
   created: async function() { // try to get a new access token and refresh using the current refresh token, if available
     try {
-      const data = await AuthApi.refresh();
-
-      this.userId = data.userId;
-      this.isLoggedIn = true;
-
-      this.isAttemptingRefreshLogin = false;
-
       this.isGettingUserDetails = true;
       
-      var user = await UsersApi.getUser(this.userId);
+      var user = await UsersApi.getUserByIdentity();
+      this.currentUser.userId = user.userId;
       this.currentUser.username = user.username;
       this.currentUser.email = user.email;
       this.currentUser.fullName = user.fullName;
 
-      this.isGettingUserDetails = false;
+      this.isLoggedIn = true;
     }
     catch(error) {
       if (!error.response) {
@@ -149,7 +141,8 @@ export default {
       }
       
       this.isLoggedIn = false;
-      this.isAttemptingRefreshLogin = false;
+    }
+    finally {
       this.isGettingUserDetails = false;
     }
   }

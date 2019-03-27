@@ -11,7 +11,7 @@ const registerUser = async function(username, password, email, fullName) {
     return response.data;
 }
 
-const getUser = async function(userId) {
+const getUserById = async function(userId) {
     const response = await api.auth.get(`/users/${userId}`);
 
     return response.data;
@@ -34,9 +34,16 @@ const deleteUser = async function(userId) {
     return;
 }
 
+const getUserByIdentity = async function() {
+    const response = await api.auth.get('/users/identity');
+
+    return response.data;
+}
+
 export default {
     registerUser: registerUser,
-    getUser: getUser,
+    getUserById: getUserById,
     updateUser: updateUser,
-    deleteUser: deleteUser
+    deleteUser: deleteUser,
+    getUserByIdentity: getUserByIdentity
 }
