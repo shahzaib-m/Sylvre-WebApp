@@ -225,7 +225,8 @@ export default {
   validations: {
     username: {
       required,
-      alphaNumHyphenUnderscore
+      alphaNumHyphenUnderscore,
+      maxLength: maxLength(20)
     },
     password: {
       required,
@@ -247,6 +248,7 @@ export default {
       }
 
       !this.$v.username.required && errors.push('Username is required.');
+      !this.$v.username.maxLength && errors.push('Username must not be more than 20 characters in length.');
       !this.$v.username.alphaNumHyphenUnderscore && errors.push('Username can only include alphabets, numbers, hyphens, and underscores.');
       this.usernameChecked && !this.isUsernameAvailable && errors.push('Sorry, that username is taken.');
       return errors;
