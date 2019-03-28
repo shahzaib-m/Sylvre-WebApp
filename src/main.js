@@ -5,6 +5,9 @@ Vue.use(BootstrapVue)
 import "./assets/css/bootstrap.min-bootswatchdarkly.css";
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
+
 import App from './App.vue'
 
 Vue.config.productionTip = false

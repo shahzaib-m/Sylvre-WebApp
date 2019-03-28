@@ -2,13 +2,18 @@
   <div id="app">
     <Navbar v-bind:isGettingUserDetails="isGettingUserDetails" v-bind:isLoggedIn="isLoggedIn"
             v-bind:username="currentUser.username" 
-            v-on:login-click="openLoginModal" v-on:register-click="openRegister"
+            v-on:login-click="openLoginModal" v-on:register-click="openRegisterModal"
             v-on:logout-click="logout" v-bind:isLoggingOut="isLoggingOut"
             v-bind:isServerDown="isServerDown" />
 
     <LoginModal ref="loginModalRef" v-bind:errorMessage="loginModalErrorMessage"
                 v-on:login-performed="attemptLogin" v-bind:isLoggingIn="isLoggingIn"
                 v-on:modal-closed="loginModalClosed" />
+
+    <RegisterModal ref="registerModalRef" v-on:server-down="receivedServerDown"
+                   v-on:register-performed="attemptRegister" v-bind:isRegistering="isRegistering"
+                   v-bind:successfulRegister="successfulRegister" v-on:modal-closed="registerModalClosed"
+                   v-bind:errorMessage="registerModalErrorMessage" />
 
     <div v-if="isServerDown" id="server-down-container" align="center">
       <i class="far fa-spin fa-frown-open fa-10x" />
@@ -24,6 +29,7 @@
 import Navbar from './components/Navbar.vue';
 
 import LoginModal from './components/LoginModal.vue';
+import RegisterModal from './components/RegisterModal.vue';
 
 import AuthApi from './services/api/Auth.js';
 import UsersApi from './services/api/Users.js';
@@ -32,7 +38,8 @@ export default {
   name: 'app',
   components: {
     Navbar,
-    LoginModal
+    LoginModal,
+    RegisterModal
   },
   data() {
     return {
@@ -49,10 +56,20 @@ export default {
 
       loginModalErrorMessage: '',
       isLoggingIn: false,
-      isLoggingOut: false
+      isLoggingOut: false,
+
+      registerModalErrorMessage: '',
+      isRegistering: false,
+      successfulRegister: false
     }
   },
   methods: {
+    receivedServerDown() {
+      this.closeLoginModal();
+      this.closeRegisterModal();
+
+      this.isServerDown = true;
+    },
     openLoginModal() {
       this.$refs.loginModalRef.show();
     },
@@ -62,8 +79,15 @@ export default {
     loginModalClosed(){
       this.loginModalErrorMessage = '';
     },
-    openRegister() {
-      console.log('register clicked');
+    openRegisterModal() {
+      this.$refs.registerModalRef.show();
+    },
+    closeRegisterModal() {
+      this.$refs.registerModalRef.hide();
+    },
+    registerModalClosed() {
+      this.registerModalErrorMessage = '';
+      this.successfulRegister = false;
     },
     openSettings() {
       console.log('settings clicked')
@@ -121,9 +145,30 @@ export default {
         this.isLoggingIn = false;
         this.isGettingUserDetails = false;
       }
+    },
+    async attemptRegister(details) {
+      this.isRegistering = true;
+
+      try {
+        await UsersApi.registerUser(details.username, details.password, details.email, '');
+        this.successfulRegister = true;
+      }
+      catch(error) {
+        if (error.response) {
+          this.registerModalErrorMessage = 'Unknown error encountered.';
+        }
+        else {  // server down
+          this.closeRegisterModal();
+
+          this.isServerDown = true;
+        }
+      }
+      finally {
+        this.isRegistering = false;
+      }
     }
   },
-  created: async function() { // try to get a new access token and refresh using the current refresh token, if available
+  created: async function() {
     try {
       this.isGettingUserDetails = true;
       

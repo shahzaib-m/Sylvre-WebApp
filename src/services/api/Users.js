@@ -1,7 +1,7 @@
 import api from './api';
 
 const registerUser = async function(username, password, email, fullName) {
-    const response = await api.auth.post('/users', {
+    const response = await api.guest.post('/users', {
         username: username,
         password: password,
         email: email,

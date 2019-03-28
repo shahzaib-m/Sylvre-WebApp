@@ -3,7 +3,7 @@ import axios from 'axios';
 const axiosOptions = {
     baseURL: process.env.VUE_APP_SYLVRE_API_URL,
     withCredentials: true,
-    timeout: 2500
+    timeout: 5000
 };
 
 const guestInstance = axios.create(axiosOptions);
