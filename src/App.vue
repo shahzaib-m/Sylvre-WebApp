@@ -114,7 +114,7 @@ export default {
       this.isLoggingIn = true;
 
       try {
-        const data = await AuthApi.login(credentials.usernameOrEmail, credentials.password);
+        await AuthApi.login(credentials.usernameOrEmail, credentials.password);
 
         this.isLoggedIn = true;
         this.isLoggingIn = false;

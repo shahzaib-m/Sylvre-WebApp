@@ -114,7 +114,7 @@ const alphaNumHyphenUnderscore = value => {
     return true;
   }
 
-  return /^[A-Za-z0-9_\-]*$/.test(value);
+  return /^[A-Za-z0-9_-]*$/.test(value);
 }
 
 export default {
@@ -142,11 +142,11 @@ export default {
     }
   },
   watch: {
-    username: function (newUsername) {
+    username: function () {
       this.usernameChecked = false;
       this.getIsUsernameAvailable();
     },
-    email: function(newEmail) {
+    email: function() {
       this.emailChecked = false;
       this.getIsEmailAvailable();
     }
