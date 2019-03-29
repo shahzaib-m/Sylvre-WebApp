@@ -19,14 +19,28 @@
       <i class="far fa-spin fa-frown-open fa-10x" />
       <h1 id="server-down-message">Sorry, the server seems to be down.</h1>
     </div>
-    <div v-else id="body-container">
+    <div v-else class="d-flex" id="wrapper" v-bind:class="{ toggled: sidebarHidden }">
+      <div id="sidebar-wrapper">
+        <Sidebar />
+      </div>
+      <div id="code-area-container">
+        <div id="code-area-navbar">
 
+        </div>
+        <div id="code-editor">
+
+        </div>
+        <div id="code-output">
+
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import Navbar from './components/Navbar.vue';
+import Sidebar from './components/Sidebar.vue';
 
 import LoginModal from './components/LoginModal.vue';
 import RegisterModal from './components/RegisterModal.vue';
@@ -38,6 +52,7 @@ export default {
   name: 'app',
   components: {
     Navbar,
+    Sidebar,
     LoginModal,
     RegisterModal
   },
@@ -60,7 +75,9 @@ export default {
 
       registerModalErrorMessage: '',
       isRegistering: false,
-      successfulRegister: false
+      successfulRegister: false,
+
+      sidebarHidden: false
     }
   },
   methods: {
@@ -211,5 +228,43 @@ export default {
 
 #server-down-message {
   margin: 20px 0px 0px 0px;
+}
+
+#sidebar-wrapper {
+  min-height: 94vh;
+  margin-left: -20rem;
+  -webkit-transition: margin .25s ease-out;
+  -moz-transition: margin .25s ease-out;
+  -o-transition: margin .25s ease-out;
+  transition: margin .25s ease-out;
+
+  border-right: 1px solid rgba(117, 77, 235, 0.651);
+}
+
+#page-content-wrapper {
+  min-width: 100vw;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+  margin-left: 0;
+}
+
+@media (min-width: 768px) {
+  #sidebar-wrapper {
+    margin-left: 0;
+  }
+
+  #page-content-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: -20rem;
+  }
+}
+
+#code-editor {
+  min-height: 70vh;
 }
 </style>
