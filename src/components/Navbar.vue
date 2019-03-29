@@ -1,5 +1,5 @@
 <template>
-  <b-navbar class="navbar" toggleable="lg" type="dark">
+  <b-navbar class="navbar" toggleable="xl" type="dark">
     <b-navbar-brand href="#">
       <img class="d-inline-block align-top" src="../assets/logo-250.png" width="25" height="25" alt="">
       Sylvre Web Editor
@@ -133,7 +133,7 @@ export default {
   animation-iteration-count: 1;
 }
 
-@media only screen and (min-width: 992px) {
+@media only screen and (min-width: 1200px) {
   .navbar {
     max-height: 55px;
   }

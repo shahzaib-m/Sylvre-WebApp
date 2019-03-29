@@ -31,6 +31,12 @@ export default {
   transition: 0.2s;
 }
 
+@media only screen and (max-width: 768px) {
+  #sample-list-item, #saved-list-item {
+    width: 12rem;
+  }
+}
+
 #sample-list-item:hover, #saved-list-item:hover {
   opacity: 1;
 }

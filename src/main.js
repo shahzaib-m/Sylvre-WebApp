@@ -13,13 +13,15 @@ import App from './App.vue'
 /* vue-fontawesome */
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faChevronLeft, faChevronRight, faBook, faUser, faTrashAlt,
-         faSignOutAlt, faSignInAlt, faUserPlus, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
-import { faFrownOpen  } from '@fortawesome/free-regular-svg-icons'
+         faSignOutAlt, faSignInAlt, faUserPlus, faCheckCircle, faSave,
+         faPlus, faPlay } from '@fortawesome/free-solid-svg-icons'
+import { faFrownOpen } from '@fortawesome/free-regular-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faChevronLeft, faChevronRight, faBook, faUser, faTrashAlt,
-            faSignOutAlt, faSignInAlt, faUserPlus, faCheckCircle);
+            faSignOutAlt, faSignInAlt, faUserPlus, faCheckCircle, faSave,
+            faPlus, faPlay);
 library.add(faFrownOpen);
 library.add(faGithub);
 

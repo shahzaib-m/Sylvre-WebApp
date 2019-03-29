@@ -25,7 +25,8 @@
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
-          
+          <CodeAreaNavbar v-on:sidebar-toggle="sidebarHidden = !sidebarHidden"
+                          v-bind:sidebarHidden="sidebarHidden" />
         </div>
         <div id="code-editor">
 
@@ -45,6 +46,8 @@ import Sidebar from './components/Sidebar.vue';
 import LoginModal from './components/LoginModal.vue';
 import RegisterModal from './components/RegisterModal.vue';
 
+import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
+
 import AuthApi from './services/api/Auth.js';
 import UsersApi from './services/api/Users.js';
 
@@ -54,7 +57,9 @@ export default {
     Navbar,
     Sidebar,
     LoginModal,
-    RegisterModal
+    RegisterModal,
+
+    CodeAreaNavbar
   },
   data() {
     return {
@@ -232,7 +237,7 @@ export default {
 
 #sidebar-wrapper {
   min-height: 94vh;
-  margin-left: -20rem;
+  margin-left: 0;
   -webkit-transition: margin .25s ease-out;
   -moz-transition: margin .25s ease-out;
   -o-transition: margin .25s ease-out;
@@ -240,28 +245,19 @@ export default {
 
   border-right: 1px solid rgba(117, 77, 235, 0.651);
 }
+#wrapper.toggled #sidebar-wrapper {
+  margin-left: -20rem;
+}
+
+@media only screen and (max-width: 768px) {
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: -12rem;
+  }
+}
 
 #code-area-container {
-  min-width: 100vw;
-}
-
-#wrapper.toggled #sidebar-wrapper {
-  margin-left: 0;
-}
-
-@media (min-width: 768px) {
-  #sidebar-wrapper {
-    margin-left: 0;
-  }
-
-  #code-area-container {
-    min-width: 0;
-    width: 100%;
-  }
-
-  #wrapper.toggled #sidebar-wrapper {
-    margin-left: -20rem;
-  }
+  min-width: 0;
+  width: 100%;
 }
 
 #code-editor {
