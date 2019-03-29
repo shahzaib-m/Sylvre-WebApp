@@ -16,7 +16,7 @@
                    v-bind:errorMessage="registerModalErrorMessage" />
 
     <div v-if="isServerDown" id="server-down-container" align="center">
-      <i class="far fa-spin fa-frown-open fa-10x" />
+      <fa-icon :icon="['far', 'frown-open']" size="10x" spin></fa-icon>
       <h1 id="server-down-message">Sorry, the server seems to be down.</h1>
     </div>
     <div v-else class="d-flex" id="wrapper" v-bind:class="{ toggled: sidebarHidden }">
@@ -25,7 +25,7 @@
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
-
+          
         </div>
         <div id="code-editor">
 
@@ -241,7 +241,7 @@ export default {
   border-right: 1px solid rgba(117, 77, 235, 0.651);
 }
 
-#page-content-wrapper {
+#code-area-container {
   min-width: 100vw;
 }
 
@@ -254,7 +254,7 @@ export default {
     margin-left: 0;
   }
 
-  #page-content-wrapper {
+  #code-area-container {
     min-width: 0;
     width: 100%;
   }

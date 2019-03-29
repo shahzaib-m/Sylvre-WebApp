@@ -5,7 +5,7 @@
          hide-header-close v-on:hide="modalHiding">
   <div align="center" v-if="successfulRegister">
     <span id="successfulRegisterIcon">
-      <i class="far fa-check-circle fa-7x"></i>
+      <fa-icon icon="check-circle" size="7x"></fa-icon>
     </span>
     <div id="successfulRegisterText">
       <h4>Success!</h4>

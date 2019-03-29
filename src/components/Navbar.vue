@@ -10,15 +10,15 @@
       <b-navbar-nav>
         <b-nav-item class="nav-item" v-bind:href="sylvreDocsUrl" target="_blank">
           Documentation
-          <i class="fas fa-book nav-item-icon"></i>
+          <fa-icon icon="book"></fa-icon>
         </b-nav-item>
         <b-nav-item class="nav-item" v-bind:href="mainProjectGithubUrl" target="_blank">
           Core/WebAPI
-          <i class="fab fa-github nav-item-icon"></i>
+          <fa-icon :icon="['fab', 'github']"></fa-icon>
         </b-nav-item>
         <b-nav-item class="nav-item" v-bind:href="webAppProjectGithubUrl" target="_blank">
           Web App
-          <i class="fab fa-github nav-item-icon"></i>
+          <fa-icon :icon="['fab', 'github']"></fa-icon>
         </b-nav-item>
         <b-nav-item class="nav-item" v-bind:href="authorGithubUrl" target="_blank">
           by shahzaib-m
@@ -32,30 +32,30 @@
           <b-dropdown v-bind:text="username" variant="outline-success" class="settings-button"
                       v-bind:disabled="isServerDown">
             <b-dropdown-item href="#">
-              <i class="fas fa-user"></i>
+              <fa-icon icon="user"></fa-icon>
               View profile
             </b-dropdown-item>
             <b-dropdown-divider />
             <b-dropdown-item href="#">
-              <i class="fas fa-trash-alt"></i>
+              <fa-icon icon="trash-alt"></fa-icon>
               Delete account
             </b-dropdown-item>
           </b-dropdown>
           <b-button variant="outline-warning" type="button"
                     @click="$emit('logout-click')" v-bind:disabled="isServerDown">
-            <i class="fas fa-sign-out-alt"></i>
+            <fa-icon icon="sign-out-alt"></fa-icon>
             Logout
           </b-button>
         </div>
         <div v-else class="not-logged-in animated infinite fadeIn">
           <b-button variant="outline-success" class="sign-in-button" type="button"
                     @click="$emit('login-click')" v-bind:disabled="isServerDown">
-            <i class="fas fa-sign-in-alt"></i>
+            <fa-icon icon="sign-in-alt"></fa-icon>
             Login
           </b-button>
           <b-button variant="outline-info" type="button"
                     @click="$emit('register-click')" v-bind:disabled="isServerDown">
-            <i class="fas fa-user-plus"></i>
+            <fa-icon icon="user-plus"></fa-icon>
             Register
           </b-button>
         </div>
