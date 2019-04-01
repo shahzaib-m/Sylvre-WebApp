@@ -21,7 +21,7 @@
     </div>
     <div v-else class="d-flex" id="wrapper" v-bind:class="{ toggled: sidebarHidden }">
       <div id="sidebar-wrapper">
-        <Sidebar />
+        <Sidebar v-on:close-sidebar="sidebarHidden = true" />
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
