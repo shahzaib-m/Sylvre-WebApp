@@ -51,7 +51,7 @@
       <b-list-group-item v-else class="list-group-item block-item" id="sample-list-item"
                         v-for="block in sampleBlocks" :key="block.id" button
                         v-on:click="openBlock(block.id)">
-        <p class="block-title">{{ block.title }}</p>
+        <p class="block-title">{{ block.name }}</p>
       </b-list-group-item>
     </div>
     <div v-else-if="isSavedBlocksOpen" id="blocks-container">
@@ -61,7 +61,7 @@
       <b-list-group-item v-else-if="savedBlocks.length >= 1" class="list-group-item block-item" id="sample-list-item"
                         v-for="block in savedBlocks" :key="block.id" button
                         v-on:click="openBlock(block.id)">
-        <p class="block-title">{{ block.title }}</p>
+        <p class="block-title">{{ block.name }}</p>
         <b-button variant="outline-warning" 
                   v-on:click.stop="editSavedBlock(block.id)">Edit</b-button>
         <b-button id="delete-saved-block-button" variant="outline-danger"

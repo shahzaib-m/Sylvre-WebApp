@@ -54,6 +54,7 @@ import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
 
 import AuthApi from './services/api/Auth.js';
 import UsersApi from './services/api/Users.js';
+import SylvreBlocksApi from './services/api/SylvreBlocks.js';
 
 export default {
   name: 'app',
@@ -89,7 +90,7 @@ export default {
       sidebarHidden: false,
 
       sampleBlocks: [],
-      sampleBlocksLoading: false,
+      sampleBlocksLoading: true,
       savedBlocks: [],
       savedBlocksLoading: false
     }
@@ -210,6 +211,9 @@ export default {
       this.currentUser.fullName = user.fullName;
 
       this.isLoggedIn = true;
+
+      var sampleBlocks = await SylvreBlocksApi.getAllSampleSylvreBlocks(true);
+      this.sampleBlocks = sampleBlocks;
     }
     catch(error) {
       if (!error.response) {
@@ -220,6 +224,7 @@ export default {
     }
     finally {
       this.isGettingUserDetails = false;
+      this.sampleBlocksLoading = false;
     }
   }
 }
