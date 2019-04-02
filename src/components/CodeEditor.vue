@@ -65,4 +65,13 @@ export default {
 
 	height: 70vh !important;
 }
+
+/** custom/modified token styles **/
+.cm-special {
+  color: rgb(137, 129, 255)
+}
+
+.cm-number {
+  color: #2dc78c !important;
+}
 </style>
