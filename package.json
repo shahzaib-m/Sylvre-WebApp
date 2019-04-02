@@ -17,6 +17,7 @@
     "bootstrap-vue": "^2.0.0-rc.14",
     "lodash": "^4.17.11",
     "vue": "^2.6.6",
+    "vue-codemirror": "^4.0.6",
     "vuelidate": "^0.7.4"
   },
   "devDependencies": {

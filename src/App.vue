@@ -33,10 +33,10 @@
                           v-bind:sidebarHidden="sidebarHidden" />
         </div>
         <div id="code-editor">
-
+          <CodeEditor :codeLoading="codeLoading" :newCode="currentCode" />
         </div>
         <div id="code-output">
-
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
       </div>
     </div>
@@ -51,6 +51,7 @@ import LoginModal from './components/LoginModal.vue';
 import RegisterModal from './components/RegisterModal.vue';
 
 import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
+import CodeEditor from './components/CodeEditor.vue';
 
 import AuthApi from './services/api/Auth.js';
 import UsersApi from './services/api/Users.js';
@@ -64,7 +65,8 @@ export default {
     LoginModal,
     RegisterModal,
 
-    CodeAreaNavbar
+    CodeAreaNavbar,
+    CodeEditor
   },
   data() {
     return {
@@ -92,7 +94,10 @@ export default {
       sampleBlocks: [],
       sampleBlocksLoading: true,
       savedBlocks: [],
-      savedBlocksLoading: false
+      savedBlocksLoading: false,
+
+      currentCode: '',
+      codeLoading: false
     }
   },
   methods: {
@@ -220,10 +225,8 @@ export default {
       this.currentUser.fullName = user.fullName;
 
       this.isLoggedIn = true;
+      this.isGettingUserDetails = false;
       this.getAndPopulateSavedBlocks();
-
-      var sampleBlocks = await SylvreBlocksApi.getAllSampleSylvreBlocks(true);
-      this.sampleBlocks = sampleBlocks;
     }
     catch(error) {
       if (!error.response) {
@@ -234,7 +237,22 @@ export default {
     }
     finally {
       this.isGettingUserDetails = false;
+    }
+
+    try {
+      var sampleBlocks = await SylvreBlocksApi.getAllSampleSylvreBlocks(true);
+      this.sampleBlocks = sampleBlocks;
       this.sampleBlocksLoading = false;
+
+      this.codeLoading = true;
+      var firstSampleBlock = await SylvreBlocksApi.getSampleSylvreBlockById(sampleBlocks[0].id);
+      this.currentCode = firstSampleBlock.body;
+      this.codeLoading = false;
+    }
+    catch(error) {
+      if (!error.response) {
+        this.isServerDown = true;
+      }
     }
   }
 }
@@ -285,6 +303,6 @@ export default {
 }
 
 #code-editor {
-  min-height: 70vh;
+  max-height: 75vh;
 }
 </style>

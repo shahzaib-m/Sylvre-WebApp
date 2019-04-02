@@ -30,6 +30,21 @@ library.add(faGithub);
 Vue.component('fa-icon', FontAwesomeIcon)
 /* --------------- */
 
+/* vue-codemirror */
+import VueCodemirror from 'vue-codemirror';
+require('codemirror/addon/mode/simple.js');
+
+import { mode } from './sylvreCmMode.js';
+VueCodemirror.CodeMirror.defineSimpleMode('sylvre', mode);
+
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/base16-dark.css';
+
+Vue.use(VueCodemirror, { 
+  options: { theme: 'base16-dark' }
+});
+/* --------------- */
+
 Vue.config.productionTip = false
 
 new Vue({
