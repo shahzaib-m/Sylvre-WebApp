@@ -131,6 +131,7 @@ export default {
         await AuthApi.logout();
 
         this.isLoggedIn = false;
+        this.savedBlocks = [];
       }
       catch (error){
         if (!error.response) {
@@ -147,10 +148,7 @@ export default {
 
       try {
         await AuthApi.login(credentials.usernameOrEmail, credentials.password);
-
-        this.isLoggedIn = true;
         this.isLoggingIn = false;
-
         this.closeLoginModal();
 
         this.isGettingUserDetails = true;
@@ -162,6 +160,9 @@ export default {
         this.currentUser.fullName = user.fullName;
 
         this.isGettingUserDetails = false;
+        this.isLoggedIn = true;
+
+        this.getAndPopulateSavedBlocks();
       }
       catch(error) {
         if (error.response) {
@@ -198,6 +199,14 @@ export default {
       finally {
         this.isRegistering = false;
       }
+    },
+    async getAndPopulateSavedBlocks() {
+      this.savedBlocksLoading = true;
+
+      var savedBlocks = await SylvreBlocksApi.getAllSylvreBlocks(true);
+      this.savedBlocks = savedBlocks;
+
+      this.savedBlocksLoading = false;
     }
   },
   created: async function() {
@@ -211,6 +220,7 @@ export default {
       this.currentUser.fullName = user.fullName;
 
       this.isLoggedIn = true;
+      this.getAndPopulateSavedBlocks();
 
       var sampleBlocks = await SylvreBlocksApi.getAllSampleSylvreBlocks(true);
       this.sampleBlocks = sampleBlocks;

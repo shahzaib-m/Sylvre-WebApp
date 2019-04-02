@@ -87,6 +87,16 @@ export default {
     sampleBlocksLoading: Boolean,
     savedBlocksLoading: Boolean
   },
+  watch: {
+    isLoggedIn: function() {
+      if (this.isLoggedIn) {
+        this.isSavedBlocksOpen = true;
+      }
+      else {
+        this.isSavedBlocksOpen = false;
+      }
+    }
+  },
   data() {
     return {
       isSampleBlocksOpen: false,
