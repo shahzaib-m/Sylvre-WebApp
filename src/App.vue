@@ -21,7 +21,11 @@
     </div>
     <div v-else class="d-flex" id="wrapper" v-bind:class="{ toggled: sidebarHidden }">
       <div id="sidebar-wrapper">
-        <Sidebar v-on:close-sidebar="sidebarHidden = true" />
+        <Sidebar v-on:close-sidebar="sidebarHidden = true"
+                 v-bind:sampleBlocks="sampleBlocks" v-bind:savedBlocks="savedBlocks"
+                 v-bind:savedBlocksLoading="savedBlocksLoading" 
+                 v-bind:sampleBlocksLoading="sampleBlocksLoading"
+                 v-bind:isLoggedIn="isLoggedIn" />
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
@@ -82,7 +86,12 @@ export default {
       isRegistering: false,
       successfulRegister: false,
 
-      sidebarHidden: false
+      sidebarHidden: false,
+
+      sampleBlocks: [],
+      sampleBlocksLoading: false,
+      savedBlocks: [],
+      savedBlocksLoading: false
     }
   },
   methods: {
