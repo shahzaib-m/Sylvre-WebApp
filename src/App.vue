@@ -73,7 +73,7 @@ export default {
       
       isGettingUserDetails: false,
       currentUser: {
-        userId: null,
+        id: null,
         username: '',
         email: '',
         fullName: ''
@@ -154,7 +154,7 @@ export default {
         this.isGettingUserDetails = true;
 
         var user = await UsersApi.getUserByIdentity();
-        this.currentUser.userId = user.userId;
+        this.currentUser.id = user.id;
         this.currentUser.username = user.username;
         this.currentUser.email = user.email;
         this.currentUser.fullName = user.fullName;
@@ -214,7 +214,7 @@ export default {
       this.isGettingUserDetails = true;
       
       var user = await UsersApi.getUserByIdentity();
-      this.currentUser.userId = user.userId;
+      this.currentUser.id = user.id;
       this.currentUser.username = user.username;
       this.currentUser.email = user.email;
       this.currentUser.fullName = user.fullName;
