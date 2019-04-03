@@ -34,7 +34,8 @@
                  v-bind:savedBlocksLoading="savedBlocksLoading" 
                  v-bind:sampleBlocksLoading="sampleBlocksLoading"
                  v-bind:isLoggedIn="isLoggedIn" 
-                 v-bind:loadedBlockId="currentlyLoadedBlock.id" />
+                 v-bind:loadedBlockId="currentlyLoadedBlock.id"
+                 v-bind:codeLoading="codeLoading" />
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
@@ -44,8 +45,9 @@
                           v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock"
                           v-on:discard-changes="handleDiscardChangesRequest"
                           v-on:save-changes="handleSaveChangesRequest"
-                          v-bind:isSaving="isSaving" />
+                          v-bind:isSaving="isSaving" v-bind:codeLoading="codeLoading" />
         </div>
+        <b-progress v-if="codeLoading" :value="100" striped animated></b-progress>
         <div id="code-editor">
           <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
         </div>
@@ -422,5 +424,9 @@ export default {
 
 #code-editor {
   max-height: 75vh;
+}
+
+.progress-bar {
+  background-color: #482C9C;
 }
 </style>

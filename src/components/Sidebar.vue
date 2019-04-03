@@ -49,7 +49,7 @@
         <b-spinner class="loading-spinner" type="grow" label="Loading"></b-spinner>
       </div>
       <b-list-group-item v-else class="list-group-item" id="sample-list-item"
-                         v-for="block in sampleBlocks" :key="block.id" button
+                         v-for="block in sampleBlocks" :key="block.id" button :disabled="codeLoading"
                          v-on:click="openBlock(block.id)"
                          :class="{ 'loaded-block-item': loadedBlockId == block.id, 'block-item': loadedBlockId != block.id }">
         <p class="block-title">{{ block.name }}</p>
@@ -60,7 +60,7 @@
         <b-spinner class="loading-spinner" type="grow" label="Loading"></b-spinner>
       </div>
       <b-list-group-item v-else-if="savedBlocks.length >= 1" class="list-group-item" id="sample-list-item"
-                         v-for="block in savedBlocks" :key="block.id" button
+                         v-for="block in savedBlocks" :key="block.id" button :disabled="codeLoading"
                          v-on:click="openBlock(block.id)"
                          :class="{ 'loaded-block-item': loadedBlockId == block.id, 'block-item': loadedBlockId != block.id }">
         <p class="block-title">{{ block.name }}</p>
@@ -89,7 +89,9 @@ export default {
     sampleBlocksLoading: Boolean,
     savedBlocksLoading: Boolean,
 
-    loadedBlockId: Number
+    loadedBlockId: Number,
+
+    codeLoading: Boolean
   },
   watch: {
     isLoggedIn: function() {

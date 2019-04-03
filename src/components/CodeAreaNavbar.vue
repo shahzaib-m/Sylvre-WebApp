@@ -10,25 +10,25 @@
 
     <b-collapse is-nav id="nav_collapse_2">
       <b-navbar-nav>
-        <b-nav-item class="nav-item new-button-item">
+        <b-nav-item class="nav-item new-button-item" :disabled="codeLoading">
           <b-button id="new-button" variant="outline-dark" v-b-tooltip.hover
-                    title="Create a new block">
+                    title="Create a new block" :disabled="codeLoading">
             <fa-icon icon="plus"></fa-icon>
             New
           </b-button>
         </b-nav-item>
-        <b-nav-item class="nav-item" :disabled="!changesMadeSinceSave && !isSampleBlock">
+        <b-nav-item class="nav-item" :disabled="codeLoading || (!changesMadeSinceSave && !isSampleBlock)">
           <b-button id="save-button" variant="outline-info" v-b-tooltip.hover
-                    title="Save current block" :disabled="!changesMadeSinceSave && !isSampleBlock"
+                    title="Save current block" :disabled="codeLoading || (!changesMadeSinceSave && !isSampleBlock)"
                     v-on:click="saveChanges">
             <fa-icon icon="save"></fa-icon>
             Save
             <b-spinner v-if="isSaving" small class="spinner" type="grow" />
           </b-button>
         </b-nav-item>
-        <b-nav-item class="nav-item" :disabled="!changesMadeSinceSave">
+        <b-nav-item class="nav-item" :disabled="codeLoading || !changesMadeSinceSave">
           <b-button id="discard-button" variant="outline-danger" v-b-tooltip.hover
-                    title="Discard changes in block" :disabled="!changesMadeSinceSave"
+                    title="Discard changes in block" :disabled="codeLoading || !changesMadeSinceSave"
                     v-on:click="discardChanges">
             <fa-icon icon="trash-alt"></fa-icon>
             Discard
@@ -36,9 +36,9 @@
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
-        <b-nav-item class="nav-item">
+        <b-nav-item class="nav-item" :disabled="codeLoading">
           <b-button align="right" id="execute-button" variant="outline-success" v-b-tooltip.hover
-                    title="Execute current block">
+                    title="Execute current block" :disabled="codeLoading">
             <fa-icon icon="play"></fa-icon>
               Execute
           </b-button>
@@ -57,7 +57,8 @@ export default {
     changesMadeSinceSave: Boolean,
     isSampleBlock: Boolean,
 
-    isSaving: Boolean
+    isSaving: Boolean,
+    codeLoading: Boolean
   },
   methods: {
     sidebarToggle() {
