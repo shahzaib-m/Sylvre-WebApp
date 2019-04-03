@@ -22,7 +22,7 @@ export default {
       this.showModal = true;
     },
     confirm() {
-			console.log('confirmed');
+			this.$emit('discard-confirmed');
     },
     cancel() {
 		  this.showModal = false;

@@ -17,7 +17,8 @@
                    v-bind:errorMessage="registerModalErrorMessage" />
 
     <DiscardConfirmationModal ref="discardConfirmationModal"
-                             :isAnyBlockLoaded="currentlyLoadedBlock.id == null ? false : true" />
+                              :isAnyBlockLoaded="currentlyLoadedBlock.id == null ? false : true"
+                              v-on:discard-confirmed="discardChanges" />
     <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
@@ -39,7 +40,7 @@
                           v-bind:sidebarHidden="sidebarHidden"
                           v-bind:changesMadeSinceSave="changesMadeSinceSave"
                           v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock"
-                          v-on:discard-changes="discardChanges" />
+                          v-on:discard-changes="openDiscardConfirmModal" />
         </div>
         <div id="code-editor">
           <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
@@ -227,8 +228,41 @@ export default {
 
       this.savedBlocksLoading = false;
     },
-    discardChanges() {
+    openDiscardConfirmModal() {
       this.$refs.discardConfirmationModal.show();
+    },
+    async discardChanges() {
+      try {
+        this.codeLoading = true;
+
+        if (this.currentlyLoadedBlock != null) {
+          var replacedBlock = {};
+          if (this.currentlyLoadedBlock.isSampleBlock) {
+            var savedSampleBlock = await SylvreBlocksApi.getSampleSylvreBlockById(this.currentlyLoadedBlock.id);
+            replacedBlock = savedSampleBlock;
+          }
+          else {
+            var savedBlock = await SylvreBlocksApi.getSylvreBlockById(this.currentlyLoadedBlock.id);
+            replacedBlock = savedBlock;
+          }
+
+          this.currentlyLoadedBlock = replacedBlock;
+          this.$refs.codeEditor.setNewCode(replacedBlock.body);
+          this.changesMadeSinceSave = false;
+        }
+        else {
+          this.$refs.codeEditor.setNewCode('');
+          this.changesMadeSinceSave = false;
+        }
+      }
+      catch(error) {
+        if (!error.response) {
+          this.isServerDown = true;
+        }
+      }
+      finally {
+        this.codeLoading = false;
+      }
     }
   },
   created: async function() {
