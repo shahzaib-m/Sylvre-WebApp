@@ -235,7 +235,7 @@ export default {
       try {
         this.codeLoading = true;
 
-        if (this.currentlyLoadedBlock != null) {
+        if (this.currentlyLoadedBlock.id != null) {
           var replacedBlock = {};
           if (this.currentlyLoadedBlock.isSampleBlock) {
             var savedSampleBlock = await SylvreBlocksApi.getSampleSylvreBlockById(this.currentlyLoadedBlock.id);
