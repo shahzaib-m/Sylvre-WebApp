@@ -31,7 +31,9 @@
       <div id="code-area-container">
         <div id="code-area-navbar">
           <CodeAreaNavbar v-on:sidebar-toggle="sidebarHidden = !sidebarHidden"
-                          v-bind:sidebarHidden="sidebarHidden" />
+                          v-bind:sidebarHidden="sidebarHidden"
+                          v-bind:changesMadeSinceSave="changesMadeSinceSave"
+                          v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock" />
         </div>
         <div id="code-editor">
           <CodeEditor :codeLoading="codeLoading" ref="codeEditor" />
@@ -98,7 +100,9 @@ export default {
       savedBlocksLoading: false,
 
       codeLoading: false,
-      currentlyLoadedBlock: {}
+      currentlyLoadedBlock: {},
+
+      changesMadeSinceSave: false
     }
   },
   methods: {

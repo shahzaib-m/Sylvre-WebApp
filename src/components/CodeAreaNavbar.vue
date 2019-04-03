@@ -17,16 +17,16 @@
             New
           </b-button>
         </b-nav-item>
-        <b-nav-item class="nav-item">
+        <b-nav-item class="nav-item" :disabled="!changesMadeSinceSave && !isSampleBlock">
           <b-button id="save-button" variant="outline-info" v-b-tooltip.hover
-                    title="Save current block">
+                    title="Save current block" :disabled="!changesMadeSinceSave && !isSampleBlock">
             <fa-icon icon="save"></fa-icon>
             Save
           </b-button>
         </b-nav-item>
-        <b-nav-item class="nav-item">
+        <b-nav-item class="nav-item" :disabled="!changesMadeSinceSave">
           <b-button id="discard-button" variant="outline-danger" v-b-tooltip.hover
-                    title="Discard changes in block">
+                    title="Discard changes in block" :disabled="!changesMadeSinceSave">
             <fa-icon icon="trash-alt"></fa-icon>
             Discard
           </b-button>
@@ -49,7 +49,10 @@
 export default {
   name: 'CodeAreaNavbar',
   props: {
-		sidebarHidden: Boolean
+    sidebarHidden: Boolean,
+    
+    changesMadeSinceSave: Boolean,
+    isSampleBlock: Boolean
   },
   methods: {
     sidebarToggle() {
