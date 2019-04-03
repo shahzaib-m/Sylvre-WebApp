@@ -19,7 +19,8 @@
         </b-nav-item>
         <b-nav-item class="nav-item" :disabled="!changesMadeSinceSave && !isSampleBlock">
           <b-button id="save-button" variant="outline-info" v-b-tooltip.hover
-                    title="Save current block" :disabled="!changesMadeSinceSave && !isSampleBlock">
+                    title="Save current block" :disabled="!changesMadeSinceSave && !isSampleBlock"
+                    v-on:click="saveChanges">
             <fa-icon icon="save"></fa-icon>
             Save
           </b-button>
@@ -61,6 +62,9 @@ export default {
     },
     discardChanges() {
       this.$emit('discard-changes');
+    },
+    saveChanges() {
+      this.$emit('save-changes');
     }
   }
 }

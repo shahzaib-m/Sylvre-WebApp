@@ -30,7 +30,7 @@ export default {
         this.codemirror.doc.clearHistory(); // remove undo history
       });
     },
-    getCode(code) {
+    getCode() {
       return this.code;
     },
     onCmCodeChange() {

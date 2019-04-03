@@ -16,6 +16,10 @@
                    v-bind:successfulRegister="successfulRegister" v-on:modal-closed="registerModalClosed"
                    v-bind:errorMessage="registerModalErrorMessage" />
 
+    <SaveNewBlockModal ref="saveNewBlockModal" v-bind:isSaving="isSaving"
+                       v-bind:errorMessage="saveNewBlockModalErrorMessage"
+                       v-on:modal-closed="this.saveNewBlockModalErrorMessage = ''"
+                       v-on:save-performed="saveNewBlock" />
     <DiscardConfirmationModal ref="discardConfirmationModal" v-on:discard-confirmed="discardChanges" />
     <!------------>
 
@@ -38,7 +42,8 @@
                           v-bind:sidebarHidden="sidebarHidden"
                           v-bind:changesMadeSinceSave="changesMadeSinceSave"
                           v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock"
-                          v-on:discard-changes="handleDiscardChangesRequest" />
+                          v-on:discard-changes="handleDiscardChangesRequest"
+                          v-on:save-changes="handleSaveChangesRequest" />
         </div>
         <div id="code-editor">
           <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
@@ -57,6 +62,7 @@ import Sidebar from './components/Sidebar.vue';
 
 import LoginModal from './components/LoginModal.vue';
 import RegisterModal from './components/RegisterModal.vue';
+import SaveNewBlockModal from './components/SaveNewBlockModal.vue';
 import DiscardConfirmationModal from './components/DiscardConfirmationModal.vue';
 
 import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
@@ -75,6 +81,7 @@ export default {
     LoginModal,
     RegisterModal,
     DiscardConfirmationModal,
+    SaveNewBlockModal,
 
     CodeAreaNavbar,
     CodeEditor
@@ -110,7 +117,9 @@ export default {
       codeLoading: false,
       currentlyLoadedBlock: {},
 
-      changesMadeSinceSave: false
+      changesMadeSinceSave: false,
+      isSaving: false,
+      saveNewBlockModalErrorMessage: ''
     }
   },
   methods: {
@@ -254,7 +263,7 @@ export default {
           newBlock = await SylvreBlocksApi.getSampleSylvreBlockById(newBlockToLoad.id);
         }
         else {
-          var newBlock = await SylvreBlocksApi.getSylvreBlockById(newBlockToLoad.id);
+          newBlock = await SylvreBlocksApi.getSylvreBlockById(newBlockToLoad.id);
         }
 
         this.currentlyLoadedBlock = newBlock;
@@ -268,6 +277,60 @@ export default {
       }
       finally {
         this.codeLoading = false;
+      }
+    },
+    handleSaveChangesRequest() {
+      if (!this.isLoggedIn) {
+        this.openLoginModal();
+      }
+      else if (this.currentlyLoadedBlock.id == null || this.currentlyLoadedBlock.isSampleBlock) {
+        this.$refs.saveNewBlockModal.show();
+      }
+      else {
+        this.saveCurrentBlock();
+      }
+    },
+    async saveNewBlock(blockName) {
+      try {
+        this.isSaving = true;
+        var currentCode = this.$refs.codeEditor.getCode();
+
+        this.currentlyLoadedBlock = await SylvreBlocksApi.createSylvreBlock(blockName, currentCode);
+        this.savedBlocks.unshift(this.currentlyLoadedBlock);
+        this.changesMadeSinceSave = false;
+        this.$refs.saveNewBlockModal.hide();
+      }
+      catch(error) {
+        if (error.response) {
+          this.saveNewBlockModalErrorMessage = 'Unknown error encountered.';
+        }
+        else {
+          this.$refs.saveNewBlockModal.hide();
+
+          this.isServerDown = true;
+        }
+      }
+      finally {
+        this.isSaving = false;
+      }
+    },
+    async saveCurrentBlock() {
+      try {
+        this.isSaving = true;
+
+        var updatedCode = this.$refs.codeEditor.getCode();
+        await SylvreBlocksApi.updateSylvreBlockById(this.currentlyLoadedBlock.id, null, updatedCode);
+
+        this.currentlyLoadedBlock.body = updatedCode;
+        this.changesMadeSinceSave = false;
+      }
+      catch(error) {
+        if (!error.response) {
+          this.isServerDown = true;
+        }
+      }
+      finally {
+        this.isSaving = false;
       }
     }
   },
