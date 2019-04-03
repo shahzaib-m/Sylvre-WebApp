@@ -23,8 +23,11 @@ const getSylvreBlockById = async function(id) {
     return response.data;
 }
 
-const updateSylvreBlockById = async function(id) {
-    await api.auth.put(`/sylvreblocks/${id}`);
+const updateSylvreBlockById = async function(id, name=null, body=null) {
+    await api.auth.put(`/sylvreblocks/${id}`, {
+        name: name,
+        body: body
+    });
 
     return;
 }
