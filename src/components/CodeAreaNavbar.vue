@@ -23,6 +23,7 @@
                     v-on:click="saveChanges">
             <fa-icon icon="save"></fa-icon>
             Save
+            <b-spinner v-if="isSaving" small class="spinner" type="grow" />
           </b-button>
         </b-nav-item>
         <b-nav-item class="nav-item" :disabled="!changesMadeSinceSave">
@@ -54,7 +55,9 @@ export default {
     sidebarHidden: Boolean,
     
     changesMadeSinceSave: Boolean,
-    isSampleBlock: Boolean
+    isSampleBlock: Boolean,
+
+    isSaving: Boolean
   },
   methods: {
     sidebarToggle() {

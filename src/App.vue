@@ -43,7 +43,8 @@
                           v-bind:changesMadeSinceSave="changesMadeSinceSave"
                           v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock"
                           v-on:discard-changes="handleDiscardChangesRequest"
-                          v-on:save-changes="handleSaveChangesRequest" />
+                          v-on:save-changes="handleSaveChangesRequest"
+                          v-bind:isSaving="isSaving" />
         </div>
         <div id="code-editor">
           <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
