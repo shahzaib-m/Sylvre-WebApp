@@ -38,7 +38,7 @@ export default {
         this.newCodeReceived = false;
       }
       else {  // change event fired due to user input code update
-        console.log('code changed')
+        this.$emit('code-changed');
       }
     }
   },

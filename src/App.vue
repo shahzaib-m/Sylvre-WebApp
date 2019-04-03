@@ -6,6 +6,7 @@
             v-on:logout-click="logout" v-bind:isLoggingOut="isLoggingOut"
             v-bind:isServerDown="isServerDown" />
 
+    <!-- Modals -->
     <LoginModal ref="loginModalRef" v-bind:errorMessage="loginModalErrorMessage"
                 v-on:login-performed="attemptLogin" v-bind:isLoggingIn="isLoggingIn"
                 v-on:modal-closed="loginModalClosed" />
@@ -14,6 +15,10 @@
                    v-on:register-performed="attemptRegister" v-bind:isRegistering="isRegistering"
                    v-bind:successfulRegister="successfulRegister" v-on:modal-closed="registerModalClosed"
                    v-bind:errorMessage="registerModalErrorMessage" />
+
+    <DiscardConfirmationModal ref="discardConfirmationModal"
+                             :isAnyBlockLoaded="currentlyLoadedBlock.id == null ? false : true" />
+    <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
       <fa-icon :icon="['far', 'frown-open']" size="10x" spin></fa-icon>
@@ -33,10 +38,11 @@
           <CodeAreaNavbar v-on:sidebar-toggle="sidebarHidden = !sidebarHidden"
                           v-bind:sidebarHidden="sidebarHidden"
                           v-bind:changesMadeSinceSave="changesMadeSinceSave"
-                          v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock" />
+                          v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock"
+                          v-on:discard-changes="discardChanges" />
         </div>
         <div id="code-editor">
-          <CodeEditor :codeLoading="codeLoading" ref="codeEditor" />
+          <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
         </div>
         <div id="code-output">
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
@@ -52,6 +58,7 @@ import Sidebar from './components/Sidebar.vue';
 
 import LoginModal from './components/LoginModal.vue';
 import RegisterModal from './components/RegisterModal.vue';
+import DiscardConfirmationModal from './components/DiscardConfirmationModal.vue';
 
 import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
 import CodeEditor from './components/CodeEditor.vue';
@@ -65,8 +72,10 @@ export default {
   components: {
     Navbar,
     Sidebar,
+
     LoginModal,
     RegisterModal,
+    DiscardConfirmationModal,
 
     CodeAreaNavbar,
     CodeEditor
@@ -217,6 +226,9 @@ export default {
       this.savedBlocks = savedBlocks;
 
       this.savedBlocksLoading = false;
+    },
+    discardChanges() {
+      this.$refs.discardConfirmationModal.show();
     }
   },
   created: async function() {

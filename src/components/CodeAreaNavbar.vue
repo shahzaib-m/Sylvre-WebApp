@@ -26,7 +26,8 @@
         </b-nav-item>
         <b-nav-item class="nav-item" :disabled="!changesMadeSinceSave">
           <b-button id="discard-button" variant="outline-danger" v-b-tooltip.hover
-                    title="Discard changes in block" :disabled="!changesMadeSinceSave">
+                    title="Discard changes in block" :disabled="!changesMadeSinceSave"
+                    v-on:click="discardChanges">
             <fa-icon icon="trash-alt"></fa-icon>
             Discard
           </b-button>
@@ -57,7 +58,10 @@ export default {
   methods: {
     sidebarToggle() {
 			this.$emit('sidebar-toggle');
-    }    
+    },
+    discardChanges() {
+      this.$emit('discard-changes');
+    }
   }
 }
 </script>
