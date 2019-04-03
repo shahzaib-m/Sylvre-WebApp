@@ -33,7 +33,7 @@
                           v-bind:sidebarHidden="sidebarHidden" />
         </div>
         <div id="code-editor">
-          <CodeEditor :codeLoading="codeLoading" :newCode="currentCode" />
+          <CodeEditor :codeLoading="codeLoading" ref="codeEditor" />
         </div>
         <div id="code-output">
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
@@ -96,7 +96,6 @@ export default {
       savedBlocks: [],
       savedBlocksLoading: false,
 
-      currentCode: '',
       codeLoading: false
     }
   },
@@ -246,7 +245,7 @@ export default {
 
       this.codeLoading = true;
       var firstSampleBlock = await SylvreBlocksApi.getSampleSylvreBlockById(sampleBlocks[0].id);
-      this.currentCode = firstSampleBlock.body;
+      this.$refs.codeEditor.setNewCode(firstSampleBlock.body);
       this.codeLoading = false;
     }
     catch(error) {

@@ -7,28 +7,39 @@
 export default {
 	name: 'CodeEditor',
 	props: {
-		newCode: String,
 		codeLoading: Boolean
 	},
   data () {
     return {
-			code: '',
+      code: '',
+      newCodeReceived: false,
       cmOptions: {
         tabSize: 2,
         mode: 'sylvre',
         lineNumbers: true,
-				line: true
+        line: true
       }
     }
 	},
-	watch: {
-		newCode: function(newCode) {
-			this.code = newCode;
-		}
-	},
   methods: {
+    setNewCode(code) {
+      this.code = code;
+      this.newCodeReceived = true;
+
+      this.$nextTick(() => {  // need to wait for DOM to update
+        this.codemirror.doc.clearHistory(); // remove undo history
+      });
+    },
+    getCode(code) {
+      return this.code;
+    },
     onCmCodeChange() {
-      console.log('code changed')
+      if (this.newCodeReceived) { // change event fired due to setNewCode() code update
+        this.newCodeReceived = false;
+      }
+      else {  // change event fired due to user input code update
+        console.log('code changed')
+      }
     }
   },
   computed: {
