@@ -9,34 +9,26 @@
 <script>
 export default {
   name: 'DiscardConfirmationModal',
-  props: {
-    isAnyBlockLoaded: Boolean
-  },
   data() {
 		return {
+      message: '',
+      isRevert: false,
+      newBlockToLoad: null,
 			showModal: false
     }
   },
   methods: {
-    show() {
+    show(message, isRevert, newBlockToLoad) { // isRevert - for when a block is being reverted to previous save, false if a complete discard (unsaved)
+      this.message = message;
+      this.isRevert = isRevert;
+      this.newBlockToLoad = newBlockToLoad;
       this.showModal = true;
     },
     confirm() {
-			this.$emit('discard-confirmed');
+			this.$emit('discard-confirmed', this.isRevert, this.newBlockToLoad);
     },
     cancel() {
 		  this.showModal = false;
-    }
-  },
-  computed: {
-    message() {
-      var message = '';
-      message += this.isAnyBlockLoaded ? 'The current code block will be reverted to its last saved state. '
-        : 'Your unsaved changes will be lost. ';
-
-      message += 'Are you sure you want to discard your current changes?'
-
-      return message;
     }
   }
 }

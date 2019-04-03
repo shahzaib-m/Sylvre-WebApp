@@ -16,9 +16,7 @@
                    v-bind:successfulRegister="successfulRegister" v-on:modal-closed="registerModalClosed"
                    v-bind:errorMessage="registerModalErrorMessage" />
 
-    <DiscardConfirmationModal ref="discardConfirmationModal"
-                              :isAnyBlockLoaded="currentlyLoadedBlock.id == null ? false : true"
-                              v-on:discard-confirmed="discardChanges" />
+    <DiscardConfirmationModal ref="discardConfirmationModal" v-on:discard-confirmed="discardChanges" />
     <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
@@ -40,7 +38,7 @@
                           v-bind:sidebarHidden="sidebarHidden"
                           v-bind:changesMadeSinceSave="changesMadeSinceSave"
                           v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock"
-                          v-on:discard-changes="openDiscardConfirmModal" />
+                          v-on:discard-changes="handleDiscardChangesRequest" />
         </div>
         <div id="code-editor">
           <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
@@ -228,32 +226,40 @@ export default {
 
       this.savedBlocksLoading = false;
     },
-    openDiscardConfirmModal() {
-      this.$refs.discardConfirmationModal.show();
+    handleDiscardChangesRequest() {
+      var message = this.currentlyLoadedBlock.id == null ? 'Your unsaved changes will be lost. '
+        : 'The current code block will be reverted to its last saved state. ';
+      message += 'Are you sure you want to discard your current changes?'
+
+      this.$refs.discardConfirmationModal.show(message, this.currentlyLoadedBlock.id != null, null);
     },
-    async discardChanges() {
+    async discardChanges(isRevert, newBlockToLoad) {
+      if (isRevert) { // reverting changes
+        this.$refs.codeEditor.setNewCode(this.currentlyLoadedBlock.body);
+        this.changesMadeSinceSave = false;
+      }
+      else if (newBlockToLoad == null) {  // nothing to load, clear editor
+        this.$refs.codeEditor.setNewCode('');
+        this.changesMadeSinceSave = false;
+      }
+      else {  // loading in this block from the API
+        this.loadBlock(newBlockToLoad);
+      }
+    },
+    async loadBlock(newBlockToLoad) {
       try {
         this.codeLoading = true;
-
-        if (this.currentlyLoadedBlock.id != null) {
-          var replacedBlock = {};
-          if (this.currentlyLoadedBlock.isSampleBlock) {
-            var savedSampleBlock = await SylvreBlocksApi.getSampleSylvreBlockById(this.currentlyLoadedBlock.id);
-            replacedBlock = savedSampleBlock;
-          }
-          else {
-            var savedBlock = await SylvreBlocksApi.getSylvreBlockById(this.currentlyLoadedBlock.id);
-            replacedBlock = savedBlock;
-          }
-
-          this.currentlyLoadedBlock = replacedBlock;
-          this.$refs.codeEditor.setNewCode(replacedBlock.body);
-          this.changesMadeSinceSave = false;
+        var newBlock = {};
+        if (newBlockToLoad.isSampleBlock) {
+          newBlock = await SylvreBlocksApi.getSampleSylvreBlockById(newBlockToLoad.id);
         }
         else {
-          this.$refs.codeEditor.setNewCode('');
-          this.changesMadeSinceSave = false;
+          var newBlock = await SylvreBlocksApi.getSylvreBlockById(newBlockToLoad.id);
         }
+
+        this.currentlyLoadedBlock = newBlock;
+        this.$refs.codeEditor.setNewCode(newBlock.body);
+        this.changesMadeSinceSave = false;
       }
       catch(error) {
         if (!error.response) {
@@ -295,12 +301,7 @@ export default {
       this.sampleBlocks = sampleBlocks;
       this.sampleBlocksLoading = false;
 
-      this.codeLoading = true;
-      var firstSampleBlock = await SylvreBlocksApi.getSampleSylvreBlockById(sampleBlocks[0].id);
-
-      this.currentlyLoadedBlock = firstSampleBlock;
-      this.$refs.codeEditor.setNewCode(firstSampleBlock.body);
-      this.codeLoading = false;
+      this.loadBlock(sampleBlocks[0]);
     }
     catch(error) {
       if (!error.response) {
