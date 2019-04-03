@@ -25,7 +25,8 @@
                  v-bind:sampleBlocks="sampleBlocks" v-bind:savedBlocks="savedBlocks"
                  v-bind:savedBlocksLoading="savedBlocksLoading" 
                  v-bind:sampleBlocksLoading="sampleBlocksLoading"
-                 v-bind:isLoggedIn="isLoggedIn" />
+                 v-bind:isLoggedIn="isLoggedIn" 
+                 v-bind:loadedBlockId="currentlyLoadedBlockId" />
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
@@ -96,7 +97,8 @@ export default {
       savedBlocks: [],
       savedBlocksLoading: false,
 
-      codeLoading: false
+      codeLoading: false,
+      currentlyLoadedBlockId: -1
     }
   },
   methods: {
@@ -245,6 +247,8 @@ export default {
 
       this.codeLoading = true;
       var firstSampleBlock = await SylvreBlocksApi.getSampleSylvreBlockById(sampleBlocks[0].id);
+
+      this.currentlyLoadedBlockId = firstSampleBlock.id;
       this.$refs.codeEditor.setNewCode(firstSampleBlock.body);
       this.codeLoading = false;
     }

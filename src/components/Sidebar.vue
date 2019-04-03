@@ -48,9 +48,10 @@
       <div v-if="sampleBlocksLoading" class="mid-container">
         <b-spinner class="loading-spinner" type="grow" label="Loading"></b-spinner>
       </div>
-      <b-list-group-item v-else class="list-group-item block-item" id="sample-list-item"
-                        v-for="block in sampleBlocks" :key="block.id" button
-                        v-on:click="openBlock(block.id)">
+      <b-list-group-item v-else class="list-group-item" id="sample-list-item"
+                         v-for="block in sampleBlocks" :key="block.id" button
+                         v-on:click="openBlock(block.id)"
+                         :class="{ 'loaded-block-item': loadedBlockId == block.id, 'block-item': loadedBlockId != block.id }">
         <p class="block-title">{{ block.name }}</p>
       </b-list-group-item>
     </div>
@@ -58,9 +59,10 @@
       <div v-if="savedBlocksLoading" class="mid-container">
         <b-spinner class="loading-spinner" type="grow" label="Loading"></b-spinner>
       </div>
-      <b-list-group-item v-else-if="savedBlocks.length >= 1" class="list-group-item block-item" id="sample-list-item"
-                        v-for="block in savedBlocks" :key="block.id" button
-                        v-on:click="openBlock(block.id)">
+      <b-list-group-item v-else-if="savedBlocks.length >= 1" class="list-group-item" id="sample-list-item"
+                         v-for="block in savedBlocks" :key="block.id" button
+                         v-on:click="openBlock(block.id)"
+                         :class="{ 'loaded-block-item': loadedBlockId == block.id, 'block-item': loadedBlockId != block.id }">
         <p class="block-title">{{ block.name }}</p>
         <b-button variant="outline-warning" 
                   v-on:click.stop="editSavedBlock(block.id)">Edit</b-button>
@@ -85,7 +87,9 @@ export default {
     savedBlocks: Array,
 
     sampleBlocksLoading: Boolean,
-    savedBlocksLoading: Boolean
+    savedBlocksLoading: Boolean,
+
+    loadedBlockId: Number
   },
   watch: {
     isLoggedIn: function() {
@@ -144,6 +148,12 @@ export default {
   }
 }
 
+.loaded-block-item {
+  opacity: 1 !important;
+  background-color: rgb(50, 31, 109);
+  color: #ffffff;
+}
+
 #sample-list-item:hover, #saved-list-item:hover {
   opacity: 1;
 }
@@ -175,7 +185,7 @@ export default {
 
 .block-item {
   color: #ffffff;
-  background-color: rgb(50, 31, 109)
+  background-color: #303030;
 }
 
 .mid-container {
