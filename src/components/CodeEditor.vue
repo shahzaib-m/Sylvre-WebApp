@@ -62,7 +62,7 @@ export default {
 	font-size: 17px;
 
 	font-family: 'Roboto Mono', monospace !important;
-	height: 70vh !important;
+	height: 64vh !important;
 }
 
 @media only screen and (max-width: 1000px) {
@@ -74,7 +74,7 @@ export default {
 .CodeMirror-scroll {
   overflow: auto;
 
-	height: 70vh !important;
+	height: 64vh !important;
 }
 
 /** custom/modified token styles **/

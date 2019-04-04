@@ -53,7 +53,7 @@
                           v-on:save-changes="handleSaveChangesRequest"
                           v-bind:isSaving="isSaving" v-bind:codeLoading="codeLoading" />
         </div>
-        <b-progress v-if="codeLoading" :value="100" striped animated></b-progress>
+        <b-progress :value="showProgressBar ? 100 : 0" striped animated></b-progress>
         <div id="code-editor">
           <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
         </div>
@@ -417,6 +417,11 @@ export default {
         this.isServerDown = true;
       }
     }
+  },
+  computed: {
+    showProgressBar() {
+      return this.codeLoading;
+    }
   }
 }
 </script>
@@ -466,7 +471,7 @@ export default {
 }
 
 #code-editor {
-  max-height: 75vh;
+  max-height: 69vh;
 }
 
 .progress-bar {
