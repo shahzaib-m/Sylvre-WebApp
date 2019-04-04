@@ -12,7 +12,8 @@
       <b-navbar-nav>
         <b-nav-item class="nav-item new-button-item" :disabled="codeLoading">
           <b-button id="new-button" variant="outline-dark" v-b-tooltip.hover
-                    title="Create a new block" :disabled="codeLoading">
+                    title="Create a new block" :disabled="codeLoading"
+                    v-on:click="createNew">
             <fa-icon icon="plus"></fa-icon>
             New
           </b-button>
@@ -63,6 +64,9 @@ export default {
   methods: {
     sidebarToggle() {
 			this.$emit('sidebar-toggle');
+    },
+    createNew() {
+      this.$emit('create-new');
     },
     discardChanges() {
       this.$emit('discard-changes');

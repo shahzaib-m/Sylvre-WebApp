@@ -43,6 +43,7 @@
                           v-bind:sidebarHidden="sidebarHidden"
                           v-bind:changesMadeSinceSave="changesMadeSinceSave"
                           v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock"
+                          v-on:create-new="handleCreateNewRequest"
                           v-on:discard-changes="handleDiscardChangesRequest"
                           v-on:save-changes="handleSaveChangesRequest"
                           v-bind:isSaving="isSaving" v-bind:codeLoading="codeLoading" />
@@ -251,8 +252,7 @@ export default {
         this.changesMadeSinceSave = false;
       }
       else if (newBlockToLoad == null) {  // nothing to load, clear editor
-        this.$refs.codeEditor.setNewCode('');
-        this.changesMadeSinceSave = false;
+        this.createNew();
       }
       else {  // loading in this block from the API
         this.loadBlock(newBlockToLoad);
@@ -335,6 +335,20 @@ export default {
       finally {
         this.isSaving = false;
       }
+    },
+    handleCreateNewRequest() {
+      if (this.changesMadeSinceSave) {
+        var message = 'You have unsaved changes. Are you sure you want to discard them?';
+        this.$refs.discardConfirmationModal.show(message, false, null);
+      }
+      else {
+        this.createNew();
+      }
+    },
+    createNew() {
+      this.currentlyLoadedBlock = {};
+      this.$refs.codeEditor.setNewCode('');
+      this.changesMadeSinceSave = false;
     }
   },
   created: async function() {
