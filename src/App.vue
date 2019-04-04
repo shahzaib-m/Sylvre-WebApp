@@ -58,7 +58,8 @@
           <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
         </div>
         <div id="code-output">
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <CodeOutput v-bind:executionOutputLines="executionOutputLines" v-bind:executionInProgress="executionInProgress"
+                      v-bind:transpileErrors="transpileErrors" v-on:clear-output="executionOutputLines = []" />
         </div>
       </div>
     </div>
@@ -76,6 +77,7 @@ import DiscardConfirmationModal from './components/DiscardConfirmationModal.vue'
 
 import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
 import CodeEditor from './components/CodeEditor.vue';
+import CodeOutput from './components/CodeOutput.vue';
 
 import AuthApi from './services/api/Auth.js';
 import UsersApi from './services/api/Users.js';
@@ -93,7 +95,8 @@ export default {
     SaveNewBlockModal,
 
     CodeAreaNavbar,
-    CodeEditor
+    CodeEditor,
+    CodeOutput
   },
   data() {
     return {
@@ -128,7 +131,11 @@ export default {
 
       changesMadeSinceSave: false,
       isSaving: false,
-      saveNewBlockModalErrorMessage: ''
+      saveNewBlockModalErrorMessage: '',
+
+      executionInProgress: false,
+      executionOutputLines: [],
+      transpileErrors: []
     }
   },
   methods: {
@@ -420,7 +427,7 @@ export default {
   },
   computed: {
     showProgressBar() {
-      return this.codeLoading;
+      return this.codeLoading || this.executionInProgress;
     }
   }
 }
