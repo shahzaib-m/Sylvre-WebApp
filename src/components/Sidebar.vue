@@ -50,7 +50,7 @@
       </div>
       <b-list-group-item v-else class="list-group-item" id="sample-list-item"
                          v-for="block in sampleBlocks" :key="block.id" button :disabled="codeLoading"
-                         v-on:click="openBlock(block.id)"
+                         v-on:click="openBlock(block.id, true)"
                          :class="{ 'loaded-block-item': loadedBlockId == block.id, 'block-item': loadedBlockId != block.id }">
         <p class="block-title">{{ block.name }}</p>
       </b-list-group-item>
@@ -61,7 +61,7 @@
       </div>
       <b-list-group-item v-else-if="savedBlocks.length >= 1" class="list-group-item" id="sample-list-item"
                          v-for="block in savedBlocks" :key="block.id" button :disabled="codeLoading"
-                         v-on:click="openBlock(block.id)"
+                         v-on:click="openBlock(block.id, false)"
                          :class="{ 'loaded-block-item': loadedBlockId == block.id, 'block-item': loadedBlockId != block.id }">
         <p class="block-title">{{ block.name }}</p>
         <b-button variant="outline-warning" 
@@ -115,8 +115,13 @@ export default {
     closeSidebar() {
       this.$emit('close-sidebar');
     },
-    openBlock(id) {
-      console.log('open: ' + id);
+    openBlock(id, isSampleBlock) {
+      if (this.loadedBlockId != id) {
+        this.$emit('load-block', { 
+          id: id,
+          isSampleBlock: isSampleBlock
+        });
+      }
     },
     editSavedBlock(id) {
       console.log('edit: ' + id);

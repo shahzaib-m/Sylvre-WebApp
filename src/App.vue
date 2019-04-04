@@ -39,7 +39,8 @@
                  v-bind:sampleBlocksLoading="sampleBlocksLoading"
                  v-bind:isLoggedIn="isLoggedIn" 
                  v-bind:loadedBlockId="currentlyLoadedBlock.id"
-                 v-bind:codeLoading="codeLoading" />
+                 v-bind:codeLoading="codeLoading"
+                 v-on:load-block="handleBlockLoad" />
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
@@ -369,6 +370,14 @@ export default {
       this.currentlyLoadedBlock = {};
       this.$refs.codeEditor.setNewCode('');
       this.changesMadeSinceSave = false;
+    },
+    handleBlockLoad(blockToLoad) {
+      if (this.changesMadeSinceSave) {
+        this.$refs.discardConfirmationModal.confirmForDiscardAndBlockLoad(blockToLoad);
+      }
+      else {
+        this.loadBlock(blockToLoad);
+      }
     }
   },
   created: async function() {
