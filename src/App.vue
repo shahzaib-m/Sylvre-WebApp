@@ -360,7 +360,7 @@ export default {
     handleCreateNewRequest() {
       if (this.changesMadeSinceSave) {
         var message = 'You have unsaved changes. Are you sure you want to discard them?';
-        this.$refs.discardConfirmationModal.show(message, false, null);
+        this.$refs.discardConfirmationModal.confirmForDiscardAndClean();
       }
       else {
         this.createNew();
