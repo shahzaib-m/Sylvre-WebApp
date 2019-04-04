@@ -59,7 +59,7 @@
         </div>
         <div id="code-output">
           <CodeOutput v-bind:executionOutputLines="executionOutputLines" v-bind:executionInProgress="executionInProgress"
-                      v-bind:transpileErrors="transpileErrors" v-on:clear-output="executionOutputLines = []" />
+                      v-bind:transpileErrors="transpileErrors" v-on:clear-output="clearOutput" />
         </div>
       </div>
     </div>
@@ -385,6 +385,10 @@ export default {
       else {
         this.loadBlock(blockToLoad);
       }
+    },
+    clearOutput() {
+      this.transpileErrors = [];
+      this.executionOutputLines = [];
     }
   },
   created: async function() {
