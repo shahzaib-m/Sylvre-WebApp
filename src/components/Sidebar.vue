@@ -97,9 +97,11 @@ export default {
     isLoggedIn: function() {
       if (this.isLoggedIn) {
         this.isSavedBlocksOpen = true;
+        this.isSampleBlocksOpen = false;
       }
       else {
         this.isSavedBlocksOpen = false;
+        this.isSampleBlocksOpen = true;
       }
     }
   },
