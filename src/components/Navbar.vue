@@ -95,6 +95,7 @@ export default {
 <style scoped>
 .navbar {
   background-color: #482C9C;
+  z-index: 9999;
 }
 
 .navbar-dark .navbar-nav .nav-link {
