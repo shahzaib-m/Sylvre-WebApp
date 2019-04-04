@@ -1,5 +1,6 @@
 <template>
-<b-modal v-model="showModal" title="Save new block" hide-header-close hide-footer>
+<b-modal v-model="showModal" title="Save new block" hide-header-close hide-footer
+				 v-on:shown="modalShown" v-on:hidden="modalHidden">
 	<b-form @submit="onSubmit" v-bind:class="{ 'lower-opacity': isSaving }">
 		<b-form-group
 			id="blocknameInputGroup"
@@ -10,7 +11,7 @@
 		>
 		<b-form-input
 			id="blocknameInput"
-			ref="blocknameInput"
+			ref="blocknameBox"
 			type="text"
 			name="blockname"
 			v-model="blockname"
@@ -60,7 +61,15 @@ export default {
       evt.preventDefault();
 
       this.$emit('save-performed', this.blockname);
+		},
+    modalShown() {
+      this.$refs.blocknameBox.focus();
     },
+		modalHidden() {
+			this.blockname = '';
+
+			this.$v.$reset();
+		}
 	},
 	validations: {
     blockname: {
