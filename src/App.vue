@@ -20,7 +20,10 @@
                        v-bind:errorMessage="saveNewBlockModalErrorMessage"
                        v-on:modal-closed="this.saveNewBlockModalErrorMessage = ''"
                        v-on:save-performed="saveNewBlock" />
-    <DiscardConfirmationModal ref="discardConfirmationModal" v-on:discard-confirmed="discardChanges" />
+    <DiscardConfirmationModal ref="discardConfirmationModal"
+                              v-on:revert-confirmed="confirmRevert"
+                              v-on:clean-confirmed="confirmClean"
+                              v-on:blockload-confirmed="confirmBlockLoad" />
     <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
@@ -240,23 +243,22 @@ export default {
       this.savedBlocksLoading = false;
     },
     handleDiscardChangesRequest() {
-      var message = this.currentlyLoadedBlock.id == null ? 'Your unsaved changes will be lost. '
-        : 'The current code block will be reverted to its last saved state. ';
-      message += 'Are you sure you want to discard your current changes?'
-
-      this.$refs.discardConfirmationModal.show(message, this.currentlyLoadedBlock.id != null, null);
+      if (this.currentlyLoadedBlock.id != null) {
+        this.$refs.discardConfirmationModal.confirmForDiscardAndRevert();
+      }
+      else {
+         this.$refs.discardConfirmationModal.confirmForDiscardAndClean();
+      }
     },
-    async discardChanges(isRevert, newBlockToLoad) {
-      if (isRevert) { // reverting changes
-        this.$refs.codeEditor.setNewCode(this.currentlyLoadedBlock.body);
-        this.changesMadeSinceSave = false;
-      }
-      else if (newBlockToLoad == null) {  // nothing to load, clear editor
-        this.createNew();
-      }
-      else {  // loading in this block from the API
-        this.loadBlock(newBlockToLoad);
-      }
+    confirmRevert() {
+      this.$refs.codeEditor.setNewCode(this.currentlyLoadedBlock.body);
+      this.changesMadeSinceSave = false;
+    },
+    confirmClean() {
+      this.createNew();
+    },
+    confirmBlockLoad(blockToLoad) {
+      this.loadBlock(blockToLoad);
     },
     async loadBlock(newBlockToLoad) {
       try {

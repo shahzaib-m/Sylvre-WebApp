@@ -12,20 +12,59 @@ export default {
   data() {
 		return {
       message: '',
+
       isRevert: false,
-      newBlockToLoad: null,
+      isClean: false,
+      isBlockLoad: false,
+      isLogout: false,
+
+      blockToLoad: null,
+      
 			showModal: false
     }
   },
   methods: {
-    show(message, isRevert, newBlockToLoad) { // isRevert - for when a block is being reverted to previous save, false if a complete discard (unsaved)
-      this.message = message;
-      this.isRevert = isRevert;
-      this.newBlockToLoad = newBlockToLoad;
+    confirmForDiscardAndRevert() {
+      this.message = 'The current code block will be reverted to its last saved state. Are you sure you want to discard your unsaved changes?';
+      this.isRevert = true;
+      this.showModal = true;
+    },
+    confirmForDiscardAndClean() {
+      this.message = 'Your unsaved changes will be lost. Are you sure you want to discard your unsaved changes?';
+      this.isClean = true;
+      this.showModal = true;
+    },
+    confirmForDiscardAndBlockLoad(blockToLoad) {
+      this.message = 'Your unsaved changes will be lost. Are you sure you want to discard your unsaved changes?';
+      this.isBlockLoad = true;
+      this.blockToLoad = blockToLoad;
+      this.showModal = true;
+    },
+    confirmForDiscardAndLogout() {
+      this.message = 'Your unsaved changes will be lost. Are you sure you want to discard your unsaved changes and logout?';
+      this.isLogout = true;
       this.showModal = true;
     },
     confirm() {
-			this.$emit('discard-confirmed', this.isRevert, this.newBlockToLoad);
+      if (this.isRevert) {
+        this.$emit('revert-confirmed');
+        this.isRevert = false;
+      }
+      else if (this.isClean) {
+        this.$emit('clean-confirmed');
+        this.isClean = false;
+      }
+      else if (this.isBlockLoad){
+        this.$emit('blockload-confirmed', this.blockToLoad);
+        this.isBlockLoad = false;
+        this.blockToLoad = null;
+      }
+      else if (this.isLogout) {
+        this.$emit('logout-confirmed');
+        this.isLogout = false;
+      }
+
+      this.showModal = false;
     },
     cancel() {
 		  this.showModal = false;
