@@ -37,11 +37,13 @@
         </b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
-        <b-nav-item class="nav-item" :disabled="codeLoading">
+        <b-nav-item class="nav-item" :disabled="codeLoading || transpileInProgress || executionInProgress">
           <b-button align="right" id="execute-button" variant="outline-success" v-b-tooltip.hover
-                    title="Execute current block" :disabled="codeLoading">
+                    title="Execute current block" :disabled="codeLoading || transpileInProgress || executionInProgress"
+                    v-on:click="executeCode">
             <fa-icon icon="play"></fa-icon>
-              Execute
+            {{ executeButtonText }}
+            <b-spinner v-if="transpileInProgress || executionInProgress" small class="spinner" type="grow" />
           </b-button>
         </b-nav-item>
       </b-navbar-nav>
@@ -59,7 +61,10 @@ export default {
     isSampleBlock: Boolean,
 
     isSaving: Boolean,
-    codeLoading: Boolean
+    codeLoading: Boolean,
+
+    transpileInProgress: Boolean,
+    executionInProgress: Boolean,
   },
   methods: {
     sidebarToggle() {
@@ -73,6 +78,22 @@ export default {
     },
     saveChanges() {
       this.$emit('save-changes');
+    },
+    executeCode() {
+      this.$emit('execute-code');
+    }
+  },
+  computed: {
+    executeButtonText() {
+      if (this.transpileInProgress) {
+        return 'Transpiling';
+      }
+      
+      if (this.executionInProgress) {
+        return 'Executing';
+      }
+
+      return 'Execute';
     }
   }
 }

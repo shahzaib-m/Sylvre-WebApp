@@ -51,6 +51,7 @@
                           v-on:create-new="handleCreateNewRequest"
                           v-on:discard-changes="handleDiscardChangesRequest"
                           v-on:save-changes="handleSaveChangesRequest"
+                          v-on:execute-code="executeCode"
                           v-bind:isSaving="isSaving" v-bind:codeLoading="codeLoading" />
         </div>
         <b-progress :value="showProgressBar ? 100 : 0" striped animated></b-progress>
@@ -59,7 +60,8 @@
         </div>
         <div id="code-output">
           <CodeOutput v-bind:executionOutputLines="executionOutputLines" v-bind:executionInProgress="executionInProgress"
-                      v-bind:transpileErrors="transpileErrors" v-on:clear-output="clearOutput" />
+                      v-bind:transpileErrors="transpileErrors" v-on:clear-output="clearOutput"
+                      ref="codeOutput" />
         </div>
       </div>
     </div>
@@ -82,6 +84,7 @@ import CodeOutput from './components/CodeOutput.vue';
 import AuthApi from './services/api/Auth.js';
 import UsersApi from './services/api/Users.js';
 import SylvreBlocksApi from './services/api/SylvreBlocks.js';
+import TranspilerApi from './services/api/Transpiler.js';
 
 export default {
   name: 'app',
@@ -133,6 +136,7 @@ export default {
       isSaving: false,
       saveNewBlockModalErrorMessage: '',
 
+      transpileInProgress: false,
       executionInProgress: false,
       executionOutputLines: [],
       transpileErrors: []
@@ -165,7 +169,7 @@ export default {
       this.successfulRegister = false;
     },
     openSettings() {
-      console.log('settings clicked')
+      
     },
     handleLogout() {
       if (this.changesMadeSinceSave) {
@@ -389,9 +393,57 @@ export default {
     clearOutput() {
       this.transpileErrors = [];
       this.executionOutputLines = [];
+    },
+    async executeCode() {
+      this.$refs.codeOutput.clearOutput();
+
+      var jsCodeToExecute = ''; 
+      try {
+        this.transpileInProgress = true;
+
+        var codeToTranspile = this.$refs.codeEditor.getCode();
+        var transpileResult = await TranspilerApi.transpileCode(codeToTranspile, 'JavaScript');
+
+        if (transpileResult.hasErrors) {
+          this.transpileErrors = transpileResult.errors;
+          this.transpileInProgress = false;
+          return;
+        }
+
+        this.transpileInProgress = false;
+        jsCodeToExecute = transpileResult.transpiledCode;
+      }
+      catch(error) {
+        if (!error.response) {
+          this.isServerDown = true;
+        }
+      }
+
+      this.executionInProgress = true;
+      this.jsExecutor(jsCodeToExecute);
+      this.executionInProgress = false;
+      this.$refs.codeOutput.finishExecution();
+    },
+    jsExecutor(jsCode) {
+      return Function(jsCode)();
+    },
+    consoleLogOverrider: function(msg) {
+      this.executionOutputLines.push({
+        isError: false,
+        text: msg
+      });
+    },
+    consoleErrorOverrider: function(msg) {
+      this.executionOutputLines.push({
+        isError: true,
+        text: msg
+      });
     }
   },
   created: async function() {
+    window.console.log = this.consoleLogOverrider;
+    window.console.error = this.consoleErrorOverrider;
+
     try {
       this.isGettingUserDetails = true;
       

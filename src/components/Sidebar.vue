@@ -124,10 +124,10 @@ export default {
       }
     },
     editSavedBlock(id) {
-      console.log('edit: ' + id);
+      
     },
     deleteSavedBlock(id) {
-      console.log('delete: ' + id);
+      
     }
   },
   computed: {

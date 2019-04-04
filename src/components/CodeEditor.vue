@@ -48,7 +48,7 @@ export default {
 		}
   },
   mounted() {
-    console.log('codemirror instance: ', this.codemirror)
+    
   }
 }
 </script>

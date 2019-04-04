@@ -6,7 +6,7 @@
 			<b-button variant="outline-warning" size="sm" v-on:click="clearOutput">Clear</b-button>
 		</b-navbar-nav>
 	</b-navbar>
-	<div id="output" ref="output" v-bind:class="{ 'output-exec-in-prog': executionInProgress }">
+	<div id="output" ref="output">
 		<p v-for="(transpileError, index) in transpileErrors" v-bind:key="index" class="transpile-error">
 			Transpile/Syntactical Error - Line {{ transpileError.line }} | "{{ transpileError.symbol }}" | {{ transpileError.message }}
 		</p>
@@ -23,7 +23,6 @@
 export default {
 	name: 'CodeOutput',
 	props: {
-		executionInProgress: Boolean,
 		executionOutputLines: Array,
 		transpileErrors: Array
 	},
@@ -33,14 +32,6 @@ export default {
 		},
 		executionOutputLines() {
 			this.scrollToEnd();
-		},
-		executionInProgress() {
-			if (this.executionInProgress) {
-				this.executionFinished = false;
-			}
-			else {
-				this.executionFinished = true;
-			}
 		}
 	},
 	data() {
@@ -52,6 +43,9 @@ export default {
 		clearOutput() {
 			this.$emit('clear-output');
 			this.executionFinished = false;
+		},
+		finishExecution() {
+			this.executionFinished = true;
 		},
 		scrollToEnd() {
 			this.$nextTick(() => {
