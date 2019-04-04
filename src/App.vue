@@ -52,7 +52,9 @@
                           v-on:discard-changes="handleDiscardChangesRequest"
                           v-on:save-changes="handleSaveChangesRequest"
                           v-on:execute-code="executeCode"
-                          v-bind:isSaving="isSaving" v-bind:codeLoading="codeLoading" />
+                          v-bind:isSaving="isSaving" v-bind:codeLoading="codeLoading"
+                          v-bind:transpileInProgress="transpileInProgress"
+                          v-bind:executionInProgress="executionInProgress" />
         </div>
         <b-progress :value="showProgressBar ? 100 : 0" striped animated></b-progress>
         <div id="code-editor">
