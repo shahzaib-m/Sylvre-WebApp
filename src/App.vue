@@ -420,7 +420,16 @@ export default {
       }
 
       this.executionInProgress = true;
-      this.jsExecutor(jsCodeToExecute);
+      try {
+        this.jsExecutor(jsCodeToExecute);
+      }
+      catch(error) {
+        this.executionOutputLines.push({
+          isError: true,
+          text: error
+        });
+      }
+      
       this.executionInProgress = false;
       this.$refs.codeOutput.finishExecution();
     },
@@ -432,17 +441,10 @@ export default {
         isError: false,
         text: msg
       });
-    },
-    consoleErrorOverrider: function(msg) {
-      this.executionOutputLines.push({
-        isError: true,
-        text: msg
-      });
     }
   },
   created: async function() {
     window.console.log = this.consoleLogOverrider;
-    window.console.error = this.consoleErrorOverrider;
 
     try {
       this.isGettingUserDetails = true;
