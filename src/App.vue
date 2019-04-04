@@ -3,7 +3,7 @@
     <Navbar v-bind:isGettingUserDetails="isGettingUserDetails" v-bind:isLoggedIn="isLoggedIn"
             v-bind:username="currentUser.username" 
             v-on:login-click="openLoginModal" v-on:register-click="openRegisterModal"
-            v-on:logout-click="logout" v-bind:isLoggingOut="isLoggingOut"
+            v-on:logout-click="handleLogout" v-bind:isLoggingOut="isLoggingOut"
             v-bind:isServerDown="isServerDown" />
 
     <!-- Modals -->
@@ -23,7 +23,8 @@
     <DiscardConfirmationModal ref="discardConfirmationModal"
                               v-on:revert-confirmed="confirmRevert"
                               v-on:clean-confirmed="confirmClean"
-                              v-on:blockload-confirmed="confirmBlockLoad" />
+                              v-on:blockload-confirmed="confirmBlockLoad"
+                              v-on:logout-confirmed="confirmLogout" />
     <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
@@ -158,7 +159,21 @@ export default {
     openSettings() {
       console.log('settings clicked')
     },
+    handleLogout() {
+      if (this.changesMadeSinceSave) {
+        if (this.currentlyLoadedBlock.id != null && !this.currentlyLoadedBlock.isSampleBlock) {
+          this.$refs.discardConfirmationModal.confirmForDiscardAndLogout();
+          return;
+        }
+      }
+
+      this.logout();
+    },
     async logout() {
+      if (this.currentlyLoadedBlock.id != null && !this.currentlyLoadedBlock.isSampleBlock) {
+        this.createNew();
+      }
+
       this.isLoggingOut = true;
 
       try {
@@ -259,6 +274,9 @@ export default {
     },
     confirmBlockLoad(blockToLoad) {
       this.loadBlock(blockToLoad);
+    },
+    confirmLogout() {
+      this.logout();
     },
     async loadBlock(newBlockToLoad) {
       try {
