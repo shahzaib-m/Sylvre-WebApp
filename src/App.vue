@@ -443,10 +443,16 @@ export default {
         isError: false,
         text: msg
       });
+    },
+    consoleClearOverrider: function() {
+      this.executionOutputLines = this.executionOutputLines.filter((line) => {
+        return line.isError;
+      })
     }
   },
   created: async function() {
     window.console.log = this.consoleLogOverrider;
+    window.console.clear = this.consoleClearOverrider;
 
     try {
       this.isGettingUserDetails = true;
