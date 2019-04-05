@@ -24,7 +24,8 @@
                               v-on:revert-confirmed="confirmRevert"
                               v-on:clean-confirmed="confirmClean"
                               v-on:blockload-confirmed="confirmBlockLoad"
-                              v-on:logout-confirmed="confirmLogout" />
+                              v-on:logout-confirmed="confirmLogout"
+                              v-on:delete-confirmed="deleteBlock" />
     <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
@@ -40,7 +41,8 @@
                  v-bind:isLoggedIn="isLoggedIn" 
                  v-bind:loadedBlockId="currentlyLoadedBlock.id"
                  v-bind:codeLoading="codeLoading"
-                 v-on:load-block="handleBlockLoad" />
+                 v-on:load-block="handleBlockLoad"
+                 v-on:delete-block="handleBlockDeleteRequest" />
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
@@ -384,6 +386,33 @@ export default {
       this.currentlyLoadedBlock = {};
       this.$refs.codeEditor.setNewCode('');
       this.changesMadeSinceSave = false;
+    },
+    handleBlockDeleteRequest(blockIdToDelete) {
+      this.$refs.discardConfirmationModal.confirmForDelete(blockIdToDelete);
+    },
+    async deleteBlock(blockIdToDelete) {
+      if (this.currentlyLoadedBlock.id == blockIdToDelete) {
+        this.createNew();
+      }
+
+      this.savedBlocksLoading = true;
+
+      try {
+        await SylvreBlocksApi.deleteSylvreBlockById(blockIdToDelete);
+
+        for (var i = 0; i < this.savedBlocks.length; i++) {
+          if (this.savedBlocks[i].id == blockIdToDelete) {
+            this.savedBlocks.splice(i, 1);
+          }
+        }
+      }
+      catch(error) {
+        if (!error.response) {
+          this.isServerDown = true;
+        }
+      }
+
+      this.savedBlocksLoading = false;
     },
     handleBlockLoad(blockToLoad) {
       if (this.changesMadeSinceSave) {

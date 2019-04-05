@@ -17,8 +17,10 @@ export default {
       isClean: false,
       isBlockLoad: false,
       isLogout: false,
+      isDelete: false,
 
       blockToLoad: null,
+      blockIdToDelete: null,
       
 			showModal: false
     }
@@ -45,6 +47,12 @@ export default {
       this.isLogout = true;
       this.showModal = true;
     },
+    confirmForDelete(blockIdToDelete) {
+      this.message = 'Are you sure you want to delete this block? If this block is currently loaded, the loaded code and any changes to it will also be deleted.';
+      this.isDelete = true;
+      this.blockIdToDelete = blockIdToDelete;
+      this.showModal = true;
+    },
     confirm() {
       if (this.isRevert) {
         this.$emit('revert-confirmed');
@@ -62,6 +70,9 @@ export default {
       else if (this.isLogout) {
         this.$emit('logout-confirmed');
         this.isLogout = false;
+      }
+      else if (this.isDelete) {
+        this.$emit('delete-confirmed', this.blockIdToDelete);
       }
 
       this.showModal = false;

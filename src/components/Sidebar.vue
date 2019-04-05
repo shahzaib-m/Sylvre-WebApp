@@ -127,7 +127,7 @@ export default {
       
     },
     deleteSavedBlock(id) {
-      
+      this.$emit('delete-block', id);
     }
   },
   computed: {
