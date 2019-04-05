@@ -7,8 +7,11 @@
 		</b-navbar-nav>
 	</b-navbar>
 	<div id="output" ref="output">
+		<p v-for="(syntaxError, index) in syntaxErrors" v-bind:key="index" class="syntax-error">
+			Syntax error: Line {{ syntaxError.line }} | "{{ syntaxError.symbol }}" | {{ syntaxError.message }}
+		<p>
 		<p v-for="(transpileError, index) in transpileErrors" v-bind:key="index" class="transpile-error">
-			Transpile/Syntactical Error - Line {{ transpileError.line }} | "{{ transpileError.symbol }}" | {{ transpileError.message }}
+			Transpile Error: Line {{ transpileError.line }} | "{{ transpileError.symbol }}" | {{ transpileError.message }}
 		</p>
 		<p v-for="(executionOutputLine, index) in executionOutputLines" v-bind:key="index"
 			 v-bind:class="{ 'error-line': executionOutputLine.isError }">
@@ -24,7 +27,8 @@ export default {
 	name: 'CodeOutput',
 	props: {
 		executionOutputLines: Array,
-		transpileErrors: Array
+		transpileErrors: Array,
+		syntaxErrors: Array
 	},
 	watch: {
 		transpileErrors() {
@@ -89,7 +93,11 @@ p {
 	margin: 15px 0px 10px 5px;
 }
 
+.syntax-error {
+	color: #f8aa50 
+}
+
 .transpile-error {
-	color: #f8aa50
+	color: rgb(214, 179, 253)
 }
 </style>

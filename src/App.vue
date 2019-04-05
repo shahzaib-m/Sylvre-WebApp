@@ -63,7 +63,7 @@
         <div id="code-output">
           <CodeOutput v-bind:executionOutputLines="executionOutputLines" v-bind:executionInProgress="executionInProgress"
                       v-bind:transpileErrors="transpileErrors" v-on:clear-output="clearOutput"
-                      ref="codeOutput" />
+                      v-bind:syntaxErrors="syntaxErrors" ref="codeOutput" />
         </div>
       </div>
     </div>
@@ -141,6 +141,7 @@ export default {
       transpileInProgress: false,
       executionInProgress: false,
       executionOutputLines: [],
+      syntaxErrors: [],
       transpileErrors: []
     }
   },
@@ -393,6 +394,7 @@ export default {
       }
     },
     clearOutput() {
+      this.syntaxErrors = [];
       this.transpileErrors = [];
       this.executionOutputLines = [];
     },
@@ -407,7 +409,13 @@ export default {
         var transpileResult = await TranspilerApi.transpileCode(codeToTranspile, 'JavaScript');
 
         if (transpileResult.hasErrors) {
-          this.transpileErrors = transpileResult.errors;
+          if (transpileResult.errorSource == 'Parser') {
+            this.syntaxErrors = transpileResult.errors;
+          }
+          else if (transpileResult.errorSource == 'Transpiler'){
+            this.transpileErrors = transpileResult.errors;
+          }
+
           this.transpileInProgress = false;
           return;
         }
@@ -428,7 +436,7 @@ export default {
       catch(error) {
         this.executionOutputLines.push({
           isError: true,
-          text: error
+          text: 'Execution error: ' + error
         });
       }
       
