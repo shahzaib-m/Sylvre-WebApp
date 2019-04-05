@@ -501,7 +501,7 @@ export default {
   },
   computed: {
     showProgressBar() {
-      return this.codeLoading || this.executionInProgress;
+      return this.codeLoading || this.transpileInProgress || this.executionInProgress;
     }
   }
 }
