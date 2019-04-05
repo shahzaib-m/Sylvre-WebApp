@@ -26,6 +26,9 @@
                               v-on:blockload-confirmed="confirmBlockLoad"
                               v-on:logout-confirmed="confirmLogout"
                               v-on:delete-confirmed="deleteBlock" />
+
+    <EditSavedBlockModal ref="editSavedBlockModal"
+                         v-on:save-performed="editBlock" />
     <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
@@ -42,7 +45,8 @@
                  v-bind:loadedBlockId="currentlyLoadedBlock.id"
                  v-bind:codeLoading="codeLoading"
                  v-on:load-block="handleBlockLoad"
-                 v-on:delete-block="handleBlockDeleteRequest" />
+                 v-on:delete-block="handleBlockDeleteRequest"
+                 v-on:edit-block="handleBlockEditRequest" />
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
@@ -80,6 +84,7 @@ import LoginModal from './components/LoginModal.vue';
 import RegisterModal from './components/RegisterModal.vue';
 import SaveNewBlockModal from './components/SaveNewBlockModal.vue';
 import DiscardConfirmationModal from './components/DiscardConfirmationModal.vue';
+import EditSavedBlockModal from './components/EditSavedBlockModal.vue';
 
 import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
 import CodeEditor from './components/CodeEditor.vue';
@@ -100,6 +105,7 @@ export default {
     RegisterModal,
     DiscardConfirmationModal,
     SaveNewBlockModal,
+    EditSavedBlockModal,
 
     CodeAreaNavbar,
     CodeEditor,
@@ -413,6 +419,27 @@ export default {
       }
 
       this.savedBlocksLoading = false;
+    },
+    handleBlockEditRequest(blockToEdit) {
+      this.$refs.editSavedBlockModal.show(blockToEdit);
+    },
+    async editBlock(editedBlock) {
+      this.codeLoading = true;
+      try {
+        await SylvreBlocksApi.updateSylvreBlockById(editedBlock.id, editedBlock.name, null);
+
+        for (var i = 0; i < this.savedBlocks.length; i++) {
+          if (this.savedBlocks[i].id == editedBlock.id) {
+            this.savedBlocks[i].name = editedBlock.name;
+          }
+        }
+      }
+      catch(error) {
+        if (!error.response) {
+          this.isServerDown = true;
+        }
+      }
+      this.codeLoading = false;
     },
     handleBlockLoad(blockToLoad) {
       if (this.changesMadeSinceSave) {

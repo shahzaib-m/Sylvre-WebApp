@@ -65,7 +65,7 @@
                          :class="{ 'loaded-block-item': loadedBlockId == block.id, 'block-item': loadedBlockId != block.id }">
         <p class="block-title">{{ block.name }}</p>
         <b-button variant="outline-warning" 
-                  v-on:click.stop="editSavedBlock(block.id)">Edit</b-button>
+                  v-on:click.stop="editSavedBlock(block.id, block.name)">Edit</b-button>
         <b-button id="delete-saved-block-button" variant="outline-danger"
                   v-on:click.stop="deleteSavedBlock(block.id)">Delete</b-button>
       </b-list-group-item>
@@ -123,8 +123,11 @@ export default {
         });
       }
     },
-    editSavedBlock(id) {
-      
+    editSavedBlock(id, name) {
+      this.$emit('edit-block', {
+        id: id,
+        name: name
+      });
     },
     deleteSavedBlock(id) {
       this.$emit('delete-block', id);
