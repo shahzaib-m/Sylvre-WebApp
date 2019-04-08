@@ -17,10 +17,9 @@ const getUserById = async function(userId) {
     return response.data;
 }
 
-const updateUser = async function(userId, username=null, password=null, email=null, fullName=null) {
+const updateUser = async function(userId, username=null, email=null, fullName=null) {
     await api.auth.put(`/users/${userId}`, {
         username: username,
-        password: password,
         email: email,
         fullName: fullName
     });
@@ -28,8 +27,20 @@ const updateUser = async function(userId, username=null, password=null, email=nu
     return;
 }
 
-const deleteUser = async function(userId) {
-    await api.auth.delete(`/users/${userId}`);
+const deleteUser = async function(userId, base64CurrentPassword) {
+    await api.auth.delete(`/users/${userId}`, {
+        headers: { 'Sylvre-Reauthenticate-Pass': base64CurrentPassword }
+    });
+
+    return;
+}
+
+const changeUserPassword = async function(userId, base64CurrentPassword, newPassword) {
+    await api.auth.put(`/users/${userId}/password`, {
+        newPassword: newPassword
+    }, { 
+        headers: { 'Sylvre-Reauthenticate-Pass': base64CurrentPassword }
+    });
 
     return;
 }
@@ -45,5 +56,6 @@ export default {
     getUserById: getUserById,
     updateUser: updateUser,
     deleteUser: deleteUser,
+    changeUserPassword: changeUserPassword,
     getUserByIdentity: getUserByIdentity
 }
