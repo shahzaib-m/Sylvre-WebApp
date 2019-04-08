@@ -486,18 +486,20 @@ export default {
       }
 
       this.executionInProgress = true;
-      try {
-        this.jsExecutor(jsCodeToExecute);
-      }
-      catch(error) {
-        this.executionOutputLines.push({
-          isError: true,
-          text: 'Execution error: ' + error
-        });
-      }
-      
-      this.executionInProgress = false;
-      this.$refs.codeOutput.finishExecution();
+      this.$nextTick(() => {
+        try {
+          this.jsExecutor(jsCodeToExecute);
+        }
+        catch(error) {
+          this.executionOutputLines.push({
+            isError: true,
+            text: 'Execution error: ' + error
+          });
+        }
+        
+        this.executionInProgress = false;
+        this.$refs.codeOutput.finishExecution();
+      });
     },
     jsExecutor(jsCode) {
       return Function(jsCode)();
