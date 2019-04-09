@@ -102,4 +102,13 @@ export default {
 .cancel-button {
   margin: 0px 10px 0px 0px;
 }
+
+.lower-opacity {
+  opacity: 0.9;
+}
+
+.error-message {
+  margin: 0px 20px 0px 0px;
+  color: #fd5454;
+}
 </style>

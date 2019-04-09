@@ -4,7 +4,7 @@
             v-bind:username="currentUser.username" 
             v-on:login-click="openLoginModal" v-on:register-click="openRegisterModal"
             v-on:logout-click="handleLogout" v-bind:isLoggingOut="isLoggingOut"
-            v-bind:isServerDown="isServerDown" />
+            v-bind:isServerDown="isServerDown" v-on:delete-account="handleDeleteAccountRequest" />
 
     <!-- Modals -->
     <LoginModal ref="loginModalRef" v-bind:errorMessage="loginModalErrorMessage"
@@ -29,6 +29,10 @@
 
     <EditSavedBlockModal ref="editSavedBlockModal"
                          v-on:save-performed="editBlock" />
+
+    <DeleteAccountModal ref="deleteAccountModal" v-on:delete-account-performed="deleteAccount"
+                        v-bind:isDeletingAccount="isDeletingAccount" v-bind:errorMessage="deleteAccountModalErrorMessage"
+                        v-on:modal-closed="deleteAccountModalErrorMessage = ''" />
     <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
@@ -85,6 +89,7 @@ import RegisterModal from './components/RegisterModal.vue';
 import SaveNewBlockModal from './components/SaveNewBlockModal.vue';
 import DiscardConfirmationModal from './components/DiscardConfirmationModal.vue';
 import EditSavedBlockModal from './components/EditSavedBlockModal.vue';
+import DeleteAccountModal from './components/DeleteAccountModal.vue';
 
 import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
 import CodeEditor from './components/CodeEditor.vue';
@@ -106,6 +111,7 @@ export default {
     DiscardConfirmationModal,
     SaveNewBlockModal,
     EditSavedBlockModal,
+    DeleteAccountModal,
 
     CodeAreaNavbar,
     CodeEditor,
@@ -150,7 +156,10 @@ export default {
       executionInProgress: false,
       executionOutputLines: [],
       syntaxErrors: [],
-      transpileErrors: []
+      transpileErrors: [],
+
+      isDeletingAccount: false,
+      deleteAccountModalErrorMessage: ''
     }
   },
   methods: {
@@ -195,6 +204,7 @@ export default {
     async logout() {
       if (this.currentlyLoadedBlock.id != null && !this.currentlyLoadedBlock.isSampleBlock) {
         this.createNew();
+        this.clearOutput();
       }
 
       this.isLoggingOut = true;
@@ -514,6 +524,39 @@ export default {
       this.executionOutputLines = this.executionOutputLines.filter((line) => {
         return line.isError;
       })
+    },
+    handleDeleteAccountRequest() {
+      this.$refs.deleteAccountModal.show();
+    },
+    async deleteAccount(currentPassword) {
+      this.isDeletingAccount = true;
+
+      try {
+        var base64CurrentPassword = window.btoa(currentPassword);
+        await UsersApi.deleteUser(this.currentUser.id, base64CurrentPassword);
+
+        if (this.currentlyLoadedBlock.id != null && !this.currentlyLoadedBlock.isSampleBlock) {
+          this.createNew();
+          this.clearOutput();
+        }
+
+        this.isLoggedIn = false;
+        this.savedBlocks = [];
+        this.$refs.deleteAccountModal.hide();
+      }
+      catch(error) {
+        if (!error.response) {
+          this.isServerDown = true;
+          this.$refs.deleteAccountModal.hide();
+        }
+        else {
+          this.deleteAccountModalErrorMessage = error.response.status === 400 ? 
+            'Password is incorrect.' : 'Unknown error encountered.';
+        }
+      }
+      finally {
+        this.isDeletingAccount = false;
+      }
     }
   },
   created: async function() {
@@ -549,7 +592,9 @@ export default {
       this.sampleBlocks = sampleBlocks;
       this.sampleBlocksLoading = false;
 
-      this.loadBlock(sampleBlocks[0]);
+      if (sampleBlocks.length != 0) {
+        this.loadBlock(sampleBlocks[0]);
+      }
     }
     catch(error) {
       if (!error.response) {
