@@ -36,6 +36,11 @@
               View profile
             </b-dropdown-item>
             <b-dropdown-divider />
+            <b-dropdown-item v-on:click="$emit('change-password')">
+              <fa-icon icon="key"></fa-icon>
+              Change password
+            </b-dropdown-item>
+           <b-dropdown-divider />
             <b-dropdown-item v-on:click="$emit('delete-account')">
               <fa-icon icon="trash-alt"></fa-icon>
               Delete account

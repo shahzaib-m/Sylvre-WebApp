@@ -15,7 +15,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faChevronLeft, faChevronRight, faBook, faUser, faTrashAlt,
          faSignOutAlt, faSignInAlt, faUserPlus, faCheckCircle, faSave,
          faPlus, faPlay, faBars, faCaretRight, faLightbulb, faEdit,
-         faCaretSquareLeft, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+         faCaretSquareLeft, faExclamationTriangle, faKey } from '@fortawesome/free-solid-svg-icons'
 import { faFrownOpen } from '@fortawesome/free-regular-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -23,7 +23,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faChevronLeft, faChevronRight, faBook, faUser, faTrashAlt,
             faSignOutAlt, faSignInAlt, faUserPlus, faCheckCircle, faSave,
             faPlus, faPlay, faBars, faCaretRight, faLightbulb, faEdit,
-            faCaretSquareLeft, faExclamationTriangle);
+            faCaretSquareLeft, faExclamationTriangle, faKey);
 library.add(faFrownOpen);
 library.add(faGithub);
 

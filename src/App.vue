@@ -4,7 +4,8 @@
             v-bind:username="currentUser.username" 
             v-on:login-click="openLoginModal" v-on:register-click="openRegisterModal"
             v-on:logout-click="handleLogout" v-bind:isLoggingOut="isLoggingOut"
-            v-bind:isServerDown="isServerDown" v-on:delete-account="handleDeleteAccountRequest" />
+            v-bind:isServerDown="isServerDown" v-on:delete-account="handleDeleteAccountRequest"
+            v-on:change-password="handlePasswordChangeRequest" />
 
     <!-- Modals -->
     <LoginModal ref="loginModalRef" v-bind:errorMessage="loginModalErrorMessage"
@@ -33,6 +34,10 @@
     <DeleteAccountModal ref="deleteAccountModal" v-on:delete-account-performed="deleteAccount"
                         v-bind:isDeletingAccount="isDeletingAccount" v-bind:errorMessage="deleteAccountModalErrorMessage"
                         v-on:modal-closed="deleteAccountModalErrorMessage = ''" />
+
+    <ChangePasswordModal ref="changePasswordModal" v-on:change-password-performed="changePassword"
+                         v-bind:isChangingPassword="isChangingPassword" v-bind:errorMessage="changePasswordErrorMessage"
+                         v-on:modal-closed="changePasswordErrorMessage = ''" />
     <!------------>
 
     <div v-if="isServerDown" id="server-down-container" align="center">
@@ -90,6 +95,7 @@ import SaveNewBlockModal from './components/SaveNewBlockModal.vue';
 import DiscardConfirmationModal from './components/DiscardConfirmationModal.vue';
 import EditSavedBlockModal from './components/EditSavedBlockModal.vue';
 import DeleteAccountModal from './components/DeleteAccountModal.vue';
+import ChangePasswordModal from './components/ChangePasswordModal.vue';
 
 import CodeAreaNavbar from './components/CodeAreaNavbar.vue';
 import CodeEditor from './components/CodeEditor.vue';
@@ -112,6 +118,7 @@ export default {
     SaveNewBlockModal,
     EditSavedBlockModal,
     DeleteAccountModal,
+    ChangePasswordModal,
 
     CodeAreaNavbar,
     CodeEditor,
@@ -159,7 +166,10 @@ export default {
       transpileErrors: [],
 
       isDeletingAccount: false,
-      deleteAccountModalErrorMessage: ''
+      deleteAccountModalErrorMessage: '',
+
+      isChangingPassword: false,
+      changePasswordErrorMessage: ''
     }
   },
   methods: {
@@ -529,6 +539,7 @@ export default {
       this.$refs.deleteAccountModal.show();
     },
     async deleteAccount(currentPassword) {
+      this.deleteAccountModalErrorMessage = '';
       this.isDeletingAccount = true;
 
       try {
@@ -556,6 +567,34 @@ export default {
       }
       finally {
         this.isDeletingAccount = false;
+      }
+    },
+    handlePasswordChangeRequest() {
+      this.$refs.changePasswordModal.show();
+    },
+    async changePassword(data) {
+      this.changePasswordErrorMessage = '';
+      this.isChangingPassword = true;
+
+      try {
+        var base64CurrentPassword = window.btoa(data.currentPassword);
+        await UsersApi.changeUserPassword(this.currentUser.id,
+          base64CurrentPassword, data.newPassword);
+
+        this.$refs.changePasswordModal.hide();
+      }
+      catch(error) {
+        if (!error.response) {
+          this.isServerDown = true;
+          this.$refs.changePasswordModal.hide();
+        }
+        else {
+          this.changePasswordErrorMessage = error.response.status === 400 ? 
+            'Current password is incorrect.' : 'Unknown error encountered.';
+        }
+      }
+      finally {
+        this.isChangingPassword = false;
       }
     }
   },
