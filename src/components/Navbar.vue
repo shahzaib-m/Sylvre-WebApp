@@ -31,11 +31,6 @@
         <div v-else-if="isLoggedIn" class="not-logged-in animated infinite fadeIn">
           <b-dropdown v-bind:text="username" variant="outline-success" class="settings-button"
                       v-bind:disabled="isServerDown">
-            <b-dropdown-item href="#">
-              <fa-icon icon="user"></fa-icon>
-              View profile
-            </b-dropdown-item>
-            <b-dropdown-divider />
             <b-dropdown-item v-on:click="$emit('change-password')">
               <fa-icon icon="key"></fa-icon>
               Change password
