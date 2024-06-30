@@ -20,7 +20,7 @@
           Web App
           <fa-icon :icon="['fab', 'github']"></fa-icon>
         </b-nav-item>
-        <b-nav-item class="nav-item" v-bind:href="authorGithubUrl" target="_blank">
+        <b-nav-item class="nav-item" v-bind:href="authorUrl" target="_blank">
           by shahzaib-m
         </b-nav-item>
       </b-navbar-nav>
@@ -80,7 +80,7 @@ export default {
       sylvreDocsUrl: process.env.VUE_APP_SYLVRE_DOCS_URL,
       mainProjectGithubUrl: process.env.VUE_APP_SYLVRE_MAIN_PROJECT_GITHUB,
       webAppProjectGithubUrl: process.env.VUE_APP_SYLVRE_WEBAPP_PROJECT_GITHUB,
-      authorGithubUrl: process.env.VUE_APP_AUTHOR_GITHUB_URL
+      authorUrl: process.env.VUE_APP_AUTHOR_URL
     }
   },
   computed: {
