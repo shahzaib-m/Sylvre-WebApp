@@ -15,9 +15,9 @@ const mode = {
     {regex: /\/\/.*/, token: "comment"},
     {regex: /\/(?:[^\\]|\\.)*?\//, token: "variable-3"},
     {regex: /\/\*/, token: "comment", next: "comment"},
-    {regex: /[-+\/*=]+/, token: "operator"},
-    {regex: /[<\[\(]/, indent: true},
-    {regex: /[>\]\)]/, dedent: true},
+    {regex: /[-+/*=]+/, token: "operator"},
+    {regex: /[<[(]/, indent: true},
+    {regex: /[>\])]/, dedent: true},
     {regex: /[A-Za-z][A-Za-z0-9_]*[\w$]*/, token: "variable"},
   ],
   comment: [
