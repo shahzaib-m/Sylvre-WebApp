@@ -1,10 +1,10 @@
 <template>
   <b-navbar class="navbar" toggleable="xl" type="dark">
       <b-button id="sidebar-toggle-button" variant="outline-info" v-b-tooltip.hover
-                :title="sidebarHidden ? 'Show menu' : 'Collapse menu'"
+                :title="sidebarVisible ? 'Collapse menu' : 'Show menu'"
                 v-on:click="sidebarToggle">
-        <fa-icon v-if="!sidebarHidden" icon="chevron-left"></fa-icon>
-        <fa-icon v-else icon="chevron-right"></fa-icon>
+        <fa-icon v-if="!sidebarVisible" icon="chevron-right"></fa-icon>
+        <fa-icon v-else icon="chevron-left"></fa-icon>
       </b-button>
     <b-navbar-toggle target="nav_collapse_2" />
 
@@ -55,7 +55,7 @@
 export default {
   name: 'CodeAreaNavbar',
   props: {
-    sidebarHidden: Boolean,
+    sidebarVisible: Boolean,
     
     changesMadeSinceSave: Boolean,
     isSampleBlock: Boolean,

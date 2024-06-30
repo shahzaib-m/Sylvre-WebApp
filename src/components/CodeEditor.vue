@@ -53,33 +53,34 @@ export default {
 }
 </script>
 <style>
+.vue-codemirror {
+  line-height: 1.5em;
+  flex: 1 1 auto;
+  margin-top: 0;
+  height: 100%;
+  position: relative;
+}
+
 .CodeMirror {
-  line-height: 1em;
-  
-  /* This prevents unwanted scrollbars from showing up on the body and wrapper in IE. */
-  overflow: hidden;
-	
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
 	font-size: 17px;
-
 	font-family: 'Roboto Mono', monospace !important;
-	height: 64vh !important;
 }
 
-@media only screen and (max-width: 1000px) {
-  .CodeMirror {
-  	font-size: 15px;
+@media only screen and (max-width: 768px) {
+  .vue-codemirror, .CodeMirror {
+    font-size: 15px;
   }
-}
-
-.CodeMirror-scroll {
-  overflow: auto;
-
-	height: 64vh !important;
 }
 
 /** custom/modified token styles **/
 .cm-special {
-  color: rgb(137, 129, 255)
+  color: rgb(137, 129, 255);
 }
 
 .cm-number {

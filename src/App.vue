@@ -44,23 +44,23 @@
       <fa-icon :icon="['far', 'frown-open']" size="10x" spin></fa-icon>
       <h1 id="server-down-message">Sorry, the server seems to be down.</h1>
     </div>
-    <div v-else class="d-flex" id="wrapper" v-bind:class="{ toggled: sidebarHidden }">
+    <div v-else class="d-flex" id="wrapper" v-bind:class="{ toggled: sidebarVisible }">
       <div id="sidebar-wrapper">
-        <Sidebar v-on:close-sidebar="sidebarHidden = true"
-                 v-bind:sampleBlocks="sampleBlocks" v-bind:savedBlocks="savedBlocks"
+        <Sidebar v-bind:sampleBlocks="sampleBlocks" v-bind:savedBlocks="savedBlocks"
                  v-bind:savedBlocksLoading="savedBlocksLoading" 
                  v-bind:sampleBlocksLoading="sampleBlocksLoading"
                  v-bind:isLoggedIn="isLoggedIn" 
                  v-bind:loadedBlockId="currentlyLoadedBlock.id"
                  v-bind:codeLoading="codeLoading"
+				 v-on:close-sidebar="toggleSidebar"
                  v-on:load-block="handleBlockLoad"
                  v-on:delete-block="handleBlockDeleteRequest"
                  v-on:edit-block="handleBlockEditRequest" />
       </div>
       <div id="code-area-container">
         <div id="code-area-navbar">
-          <CodeAreaNavbar v-on:sidebar-toggle="sidebarHidden = !sidebarHidden"
-                          v-bind:sidebarHidden="sidebarHidden"
+          <CodeAreaNavbar v-on:sidebar-toggle="toggleSidebar"
+                          v-bind:sidebarVisible="sidebarVisible"
                           v-bind:changesMadeSinceSave="changesMadeSinceSave"
                           v-bind:isSampleBlock="currentlyLoadedBlock.isSampleBlock"
                           v-on:create-new="handleCreateNewRequest"
@@ -72,9 +72,7 @@
                           v-bind:executionInProgress="executionInProgress" />
         </div>
         <b-progress :value="showProgressBar ? 100 : 0" striped animated></b-progress>
-        <div id="code-editor">
-          <CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
-        </div>
+		<CodeEditor :codeLoading="codeLoading" ref="codeEditor" v-on:code-changed="changesMadeSinceSave = true" />
         <div id="code-output">
           <CodeOutput v-bind:executionOutputLines="executionOutputLines" v-bind:executionInProgress="executionInProgress"
                       v-bind:transpileErrors="transpileErrors" v-on:clear-output="clearOutput"
@@ -145,7 +143,7 @@ export default {
       isRegistering: false,
       successfulRegister: false,
 
-      sidebarHidden: false,
+      sidebarHidden: window.innerWidth <= 768,
 
       sampleBlocks: [],
       sampleBlocksLoading: true,
@@ -401,7 +399,6 @@ export default {
     },
     handleCreateNewRequest() {
       if (this.changesMadeSinceSave) {
-        var message = 'You have unsaved changes. Are you sure you want to discard them?';
         this.$refs.discardConfirmationModal.confirmForDiscardAndClean();
       }
       else {
@@ -596,6 +593,9 @@ export default {
       finally {
         this.isChangingPassword = false;
       }
+    },
+    toggleSidebar() {
+      this.sidebarHidden = !this.sidebarHidden;
     }
   },
   created: async function() {
@@ -644,14 +644,24 @@ export default {
   computed: {
     showProgressBar() {
       return this.codeLoading || this.transpileInProgress || this.executionInProgress;
+    },
+	sidebarVisible() {
+      return !this.sidebarHidden;
     }
   }
 }
 </script>
 
 <style>
+html, body, #app, #wrapper {
+  height: 100%;
+  margin: 0;
+}
+
 #app {
   font-family: 'Roboto', 'Avenir', Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 #server-down-container {
@@ -668,33 +678,59 @@ export default {
   margin: 20px 0px 0px 0px;
 }
 
+#wrapper {
+  display: flex;
+  flex: 1;
+}
+
 #sidebar-wrapper {
-  min-height: 94vh;
-  margin-left: 0;
+  flex: 0 0 250px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-right: 1px solid rgba(117, 77, 235, 0.651);
   -webkit-transition: margin .25s ease-out;
   -moz-transition: margin .25s ease-out;
   -o-transition: margin .25s ease-out;
   transition: margin .25s ease-out;
-
-  border-right: 1px solid rgba(117, 77, 235, 0.651);
+  margin-left: -321px;
 }
 #wrapper.toggled #sidebar-wrapper {
-  margin-left: -20rem;
+  margin-left: 0px;
 }
 
 @media only screen and (max-width: 768px) {
+  #sidebar-wrapper {
+    flex: 0 0 193px;
+	margin-left: -193px;
+  }
+
   #wrapper.toggled #sidebar-wrapper {
-    margin-left: -12rem;
+    margin-left: 0px;
   }
 }
 
 #code-area-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   min-width: 0;
-  width: 100%;
+  height: 100%;
+}
+
+#code-area-navbar {
+  flex: 0 0 auto;
 }
 
 #code-editor {
-  max-height: 69vh;
+  flex: 1 1 auto;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+#code-output {
+  flex: 0 0 auto;
 }
 
 .progress-bar {
